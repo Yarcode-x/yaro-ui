@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@yaro/ui — Tokens · Sistema de Diseño</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <style>
+    /* ── Token grid ─────────────────────────────────────────────── */
+    .tokens-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 10px;
+    }
+    .token-card {
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      overflow: hidden; cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .token-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+    .token-swatch { height: 76px; position: relative; }
+    .token-swatch-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.15);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity var(--transition-fast);
+      font-size: 12px; font-weight: 600; color: #fff; letter-spacing: .03em;
+    }
+    .token-card:hover .token-swatch-overlay { opacity: 1; }
+    .token-info { padding: 10px 12px 12px; }
+    .token-name { font-family: var(--font-mono); font-size: 10px; font-weight: 500; color: var(--color-text); margin-bottom: 2px; }
+    .token-val  { font-family: var(--font-mono); font-size: 10px; color: var(--color-text3); margin-bottom: 4px; }
+    .token-use  { font-size: 11px; font-weight: 300; color: var(--color-text2); line-height: 1.4; }
+
+    /* ── Estado grid ────────────────────────────────────────────── */
+    .state-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+    .state-card { background: var(--color-white); border: 1px solid var(--color-border); border-radius: var(--radius); box-shadow: var(--shadow-md); overflow: hidden; }
+    .state-head { padding: 12px 16px; border-bottom: 1px solid var(--color-border); display: flex; align-items: flex-start; gap: 10px; }
+    .state-dot-lg { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; margin-top: 2px; }
+    .state-head-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .state-head-desc { font-size: 11px; font-weight: 300; color: var(--color-text3); line-height: 1.4; }
+    .state-swatches { display: grid; grid-template-columns: repeat(3, 1fr); }
+    .state-swatch { padding: 10px 12px; cursor: pointer; transition: background var(--transition-fast); border-right: 1px solid var(--color-border); }
+    .state-swatch:last-child { border-right: none; }
+    .state-swatch:hover { background: var(--color-bg2); }
+    .state-swatch-bar { height: 28px; border-radius: var(--radius-xs); margin-bottom: 6px; }
+    .state-swatch-lbl { font-family: var(--font-mono); font-size: 9px; color: var(--color-text3); margin-bottom: 2px; }
+    .state-swatch-var { font-family: var(--font-mono); font-size: 9px; color: var(--color-text2); font-weight: 500; }
+
+    /* ── Sombras ────────────────────────────────────────────────── */
+    .shadow-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .shadow-card { background: var(--color-white); border-radius: var(--radius); padding: 24px 18px 18px; cursor: pointer; transition: transform var(--transition-fast); border: 1px solid var(--color-border); }
+    .shadow-card:hover { transform: translateY(-2px); }
+    .shadow-demo-box { width: 44px; height: 44px; background: var(--color-accent); border-radius: var(--radius-sm); margin-bottom: 16px; }
+    .shadow-sm-card { box-shadow: var(--shadow-sm); }
+    .shadow-md-card { box-shadow: var(--shadow-md); }
+    .shadow-lg-card { box-shadow: var(--shadow-lg); }
+    .shadow-name { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--color-text); margin-bottom: 4px; }
+    .shadow-use  { font-size: 12px; font-weight: 300; color: var(--color-text2); line-height: 1.5; }
+    .shadow-hint { margin-top: 12px; font-size: 10px; font-family: var(--font-mono); color: var(--color-text3); }
+
+    /* ── Radios ─────────────────────────────────────────────────── */
+    .radius-grid { display: flex; gap: 14px; }
+    .radius-card { flex: 1; padding: 18px; background: var(--color-white); border: 1px solid var(--color-border); border-radius: var(--radius); box-shadow: var(--shadow-md); cursor: pointer; transition: all var(--transition-fast); }
+    .radius-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-1px); }
+    .radius-preview { height: 48px; background: var(--color-bg2); border: 2px solid var(--color-border2); margin-bottom: 12px; }
+    .radius-name { font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: var(--color-text); margin-bottom: 2px; }
+    .radius-val  { font-family: var(--font-mono); font-size: 11px; color: var(--color-text3); margin-bottom: 4px; }
+    .radius-use  { font-size: 11px; font-weight: 300; color: var(--color-text2); line-height: 1.4; }
+
+    /* ── Tipografía ─────────────────────────────────────────────── */
+    .type-scale { display: flex; flex-direction: column; gap: 4px; }
+    .type-row {
+      display: grid; grid-template-columns: 130px 1fr 120px;
+      align-items: center; gap: 20px;
+      padding: 10px 16px;
+      background: var(--color-white); border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm); box-shadow: var(--shadow-sm);
+      cursor: pointer; transition: background var(--transition-fast);
+    }
+    .type-row:hover { background: var(--color-surface); }
+    .type-meta  { display: flex; flex-direction: column; gap: 2px; }
+    .type-var   { font-family: var(--font-mono); font-size: 10px; font-weight: 500; color: var(--color-text2); }
+    .type-px    { font-family: var(--font-mono); font-size: 9px; color: var(--color-text3); }
+    .type-sample{ color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .type-use   { font-size: 11px; font-weight: 300; color: var(--color-text3); text-align: right; line-height: 1.3; }
+
+    /* ── Espaciado ──────────────────────────────────────────────── */
+    .space-rows { display: flex; flex-direction: column; gap: 4px; }
+    .space-row {
+      display: grid; grid-template-columns: 110px 50px 1fr;
+      align-items: center; gap: 16px;
+      padding: 9px 16px;
+      background: var(--color-white); border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm); box-shadow: var(--shadow-sm);
+      cursor: pointer; transition: background var(--transition-fast);
+    }
+    .space-row:hover { background: var(--color-surface); }
+    .space-var  { font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: var(--color-text2); }
+    .space-px   { font-family: var(--font-mono); font-size: 11px; color: var(--color-text3); }
+    .space-right{ display: flex; align-items: center; gap: 12px; }
+    .space-bar  { height: 9px; background: var(--color-accent-dk); border-radius: 3px; flex-shrink: 0; }
+    .space-use  { font-size: 11px; font-weight: 300; color: var(--color-text2); }
+
+    /* ── Transiciones ───────────────────────────────────────────── */
+    .trans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .trans-card { padding: 18px; background: var(--color-white); border: 1px solid var(--color-border); border-radius: var(--radius); box-shadow: var(--shadow-md); overflow: hidden; cursor: pointer; }
+    .trans-box  { width: 40px; height: 40px; background: var(--color-accent-dk); border-radius: var(--radius-sm); margin-bottom: 14px; }
+    .trans-card:hover .trans-fast   { transition: transform .12s ease; transform: translateX(56px); }
+    .trans-card:hover .trans-base   { transition: transform .20s ease; transform: translateX(56px); }
+    .trans-card:hover .trans-spring { transition: transform .40s cubic-bezier(.22,1,.36,1); transform: translateX(56px); }
+    .trans-name { font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: var(--color-text); margin-bottom: 3px; }
+    .trans-val  { font-family: var(--font-mono); font-size: 10px; color: var(--color-text3); margin-bottom: 6px; }
+    .trans-use  { font-size: 11px; font-weight: 300; color: var(--color-text2); line-height: 1.5; }
+    .trans-hint { margin-top: 10px; font-size: 10px; font-family: var(--font-mono); color: var(--color-text3); font-style: italic; }
+
+    /* ── Console preview ────────────────────────────────────────── */
+    .console-wrap  { background: #0a0a0b; border-radius: var(--radius); padding: 24px; border: 1px solid rgba(255,255,255,0.06); }
+    .console-title { font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,.3); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 16px; }
+    .console-swatches { display: flex; gap: 12px; flex-wrap: wrap; }
+    .console-swatch   { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .console-dot      { width: 52px; height: 52px; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,.06); }
+    .console-label    { font-family: var(--font-mono); font-size: 9px; color: rgba(255,255,255,.35); text-align: center; }
+    .console-code     { margin-top: 20px; font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,.25); line-height: 1.7; }
+
+    /* ── Roadmap ────────────────────────────────────────────────── */
+    .roadmap-items { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
+    .roadmap-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 20px;
+      background: var(--color-white); border-radius: var(--radius);
+      border: 1px solid var(--color-border); box-shadow: var(--shadow-sm);
+      animation: fu .4s cubic-bezier(.22,1,.36,1) both;
+      text-decoration: none; color: inherit;
+      transition: box-shadow var(--transition-fast);
+    }
+    .roadmap-item:hover { box-shadow: var(--shadow-md); }
+    .roadmap-item.done  { border-color: var(--color-accent-border); }
+    .roadmap-num {
+      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700;
+    }
+    .roadmap-num.done    { background: var(--color-accent); color: var(--color-accent-txt); }
+    .roadmap-num.pending { background: var(--color-bg2); color: var(--color-text3); border: 1px solid var(--color-border2); }
+    .roadmap-body  { flex: 1; }
+    .roadmap-name  { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+    .roadmap-desc  { font-size: 12px; font-weight: 300; color: var(--color-text3); line-height: 1.4; }
+    .roadmap-badge { font-size: 11px; font-weight: 500; flex-shrink: 0; padding: 4px 12px; border-radius: 20px; }
+    .badge-done    { background: var(--color-accent); color: var(--color-accent-txt); }
+    .badge-pending { background: var(--color-bg2); color: var(--color-text3); }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark">yaro/ui</div>
+    <span class="logo-name">sistema de diseño</span>
+  </div>
+  <div class="topbar-chips">
+    <a href="index.html"        class="chip active">Tokens</a>
+    <a href="instalacion.html"  class="chip">Instalación</a>
+    <a href="atoms.html"        class="chip">Átomos</a>
+    <a href="molecules.html"    class="chip">Moléculas</a>
+    <a href="organisms.html"    class="chip">Organismos</a>
+    <span class="chip">v1.0.0</span>
+  </div>
+</div>
+
+<div class="shell">
+
+  <!-- SIDENAV -->
+  <nav class="sidenav">
+    <div class="sn-section">
+      <span class="sn-label">Tokens</span>
+      <div class="sn-item active" data-id="colores" onclick="scrollToSection('colores', this)">
+        <div class="sn-dot"></div>Colores de superficie
+      </div>
+      <div class="sn-item" data-id="acento" onclick="scrollToSection('acento', this)">
+        <div class="sn-dot"></div>Acento
+      </div>
+      <div class="sn-item" data-id="estados" onclick="scrollToSection('estados', this)">
+        <div class="sn-dot"></div>Estados
+      </div>
+      <div class="sn-item" data-id="sombras" onclick="scrollToSection('sombras', this)">
+        <div class="sn-dot"></div>Sombras
+      </div>
+      <div class="sn-item" data-id="radios" onclick="scrollToSection('radios', this)">
+        <div class="sn-dot"></div>Radios de borde
+      </div>
+      <span class="sn-label">Fundamentos</span>
+      <div class="sn-item" data-id="tipografia" onclick="scrollToSection('tipografia', this)">
+        <div class="sn-dot"></div>Tipografía
+      </div>
+      <div class="sn-item" data-id="espaciado" onclick="scrollToSection('espaciado', this)">
+        <div class="sn-dot"></div>Espaciado
+      </div>
+      <div class="sn-item" data-id="transiciones" onclick="scrollToSection('transiciones', this)">
+        <div class="sn-dot"></div>Transiciones
+      </div>
+      <span class="sn-label">Temas</span>
+      <div class="sn-item" data-id="console" onclick="scrollToSection('console', this)">
+        <div class="sn-dot"></div>Console (oscuro)
+      </div>
+      <span class="sn-label">Proyecto</span>
+      <div class="sn-item" data-id="roadmap" onclick="scrollToSection('roadmap', this)">
+        <div class="sn-dot"></div>Roadmap @yaro/ui
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- INTRO -->
+    <div class="intro-wrap">
+      <div>
+        <div class="intro-title">Sistema de diseño YARO</div>
+        <p class="intro-desc">
+          Este documento es la <strong>única fuente de verdad</strong> del sistema de diseño.
+          Todos los componentes de <code>@yaro/ui</code> referencian estos tokens.
+          Nunca hardcodear colores, sombras o tipografía directamente en los componentes.
+        </p>
+      </div>
+      <div class="progress-card">
+        <div class="progress-card-title">Progreso @yaro/ui</div>
+        <div class="progress-rows" id="progress-rows"></div>
+      </div>
+    </div>
+
+    <!-- COLORES DE SUPERFICIE -->
+    <div class="section" id="colores">
+      <div class="section-title">Colores de superficie</div>
+      <div class="section-desc">Jerarquía de fondos del sistema. Se usan en capas: bg es el más profundo, white es el más elevado. Las cards siempre van sobre bg o bg2.</div>
+      <div class="rule-box">⚠ Nunca usar colores en hex directamente en componentes — siempre <code style="font-family:var(--font-mono);font-size:11px;">var(--color-*)</code>. Haz clic en cualquier token para copiarlo.</div>
+      <div class="sub-title">Superficies y texto</div>
+      <div class="tokens-grid" id="grid-superficies"></div>
+    </div>
+
+    <!-- ACENTO -->
+    <div class="section" id="acento">
+      <div class="section-title">Acento</div>
+      <div class="section-desc">El verde-limón cálido es el color identificador de YARO. Cuatro variantes según el uso: fondo completo, borde/barra, texto sobre fondo acento, y fondo sutil.</div>
+      <div class="tokens-grid" id="grid-acento" style="grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));"></div>
+    </div>
+
+    <!-- ESTADOS -->
+    <div class="section" id="estados">
+      <div class="section-title">Colores de estado</div>
+      <div class="section-desc">Cada estado tiene tres variantes: base (texto/íconos), bg (fondos semitransparentes) y border (bordes de badges y alertas). Verde = OK, rojo = error, siempre. Haz clic en cualquier variante para copiar su token.</div>
+      <div class="state-grid" id="grid-estados"></div>
+    </div>
+
+    <!-- SOMBRAS -->
+    <div class="section" id="sombras">
+      <div class="section-title">Sombras</div>
+      <div class="section-desc">Tres niveles de elevación crean la jerarquía visual. El elemento con mayor sombra percibe estar más cerca del usuario. Haz clic para copiar.</div>
+      <div class="shadow-grid" id="grid-sombras"></div>
+    </div>
+
+    <!-- RADIOS -->
+    <div class="section" id="radios">
+      <div class="section-title">Radios de borde</div>
+      <div class="section-desc">Tres niveles de redondez. Los valores más grandes van en contenedores principales; los más pequeños en elementos dentro de ellos.</div>
+      <div class="radius-grid" id="grid-radios"></div>
+    </div>
+
+    <!-- TIPOGRAFÍA -->
+    <div class="section" id="tipografia">
+      <div class="section-title">Tipografía</div>
+      <div class="section-desc">YARO usa exclusivamente <strong style="font-weight:600;">Outfit</strong>. No mezclar con otras fuentes. JetBrains Mono solo para valores numéricos de precisión, código y YARO Console.</div>
+      <div style="padding:16px 20px;background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius);box-shadow:var(--shadow-sm);margin:16px 0;">
+        <div style="font-size:10px;font-weight:600;color:var(--color-text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">Muestra — Outfit</div>
+        <div style="font-family:'Outfit',sans-serif;display:flex;gap:24px;flex-wrap:wrap;align-items:baseline;">
+          <span style="font-weight:300;font-size:20px;">Light</span>
+          <span style="font-weight:400;font-size:20px;">Regular</span>
+          <span style="font-weight:500;font-size:20px;">Medium</span>
+          <span style="font-weight:600;font-size:20px;">Semibold</span>
+          <span style="font-weight:700;font-size:20px;">Bold</span>
+        </div>
+        <div style="font-family:'Outfit',sans-serif;font-size:14px;color:var(--color-text2);margin-top:8px;">ABCDEFGHIJKLMNOPQRSTUVWXYZ · 0123456789 · $#@&amp;</div>
+      </div>
+      <div class="type-scale" id="type-scale"></div>
+    </div>
+
+    <!-- ESPACIADO -->
+    <div class="section" id="espaciado">
+      <div class="section-title">Espaciado</div>
+      <div class="section-desc">Escala de 4px. Todos los márgenes, paddings y gaps deben usar estos tokens. Nunca espaciados arbitrarios como 7px o 15px. Haz clic para copiar.</div>
+      <div class="space-rows" id="space-rows"></div>
+    </div>
+
+    <!-- TRANSICIONES -->
+    <div class="section" id="transiciones">
+      <div class="section-title">Transiciones</div>
+      <div class="section-desc">Pasa el cursor sobre cada card para ver la animación. El spring es el más característico de YARO — se usa en la aparición de modales y cards.</div>
+      <div class="trans-grid" id="trans-grid"></div>
+    </div>
+
+    <!-- CONSOLE -->
+    <div class="section" id="console">
+      <div class="section-title">Tema oscuro — YARO Console</div>
+      <div class="section-desc">Los mismos tokens CSS, valores distintos. La Console aplica <code style="font-family:var(--font-mono);font-size:12px;background:var(--color-bg2);padding:2px 6px;border-radius:4px;">[data-theme="console"]</code> en el elemento raíz para sobrescribir todas las variables automáticamente.</div>
+      <div class="console-wrap" style="margin-top:16px;">
+        <div class="console-title">Paleta Console — dark mode</div>
+        <div class="console-swatches" id="console-swatches"></div>
+        <div class="console-code">
+          [data-theme="console"] {<br>
+          &nbsp;&nbsp;--color-bg: #0a0a0b;<br>
+          &nbsp;&nbsp;--color-accent: #7c6af7;<br>
+          &nbsp;&nbsp;--color-text: #e8e8ec;<br>
+          &nbsp;&nbsp;/* ... todas las variables sobrescritas */<br>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- ROADMAP -->
+    <div class="section" id="roadmap">
+      <div class="section-title">Roadmap — @yaro/ui</div>
+      <div class="section-desc">El sistema se construye en orden. Los tokens son la base; sin ellos nada de lo siguiente puede existir con consistencia.</div>
+      <div class="roadmap-items" id="roadmap-items"></div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<div class="toast" id="toast"></div>
+
+<script src="js/main.js"></script>
+<script>
+/* ─── Data ────────────────────────────────────────────────────────────────── */
+const superficies = [
+  { n: '--color-bg',      v: '#f0ede8',          use: 'Fondo del body' },
+  { n: '--color-bg2',     v: '#ece9e3',          use: 'Topbar, sidenav, toolbar' },
+  { n: '--color-surface', v: '#faf9f7',          use: 'Secciones, fondos de formulario' },
+  { n: '--color-white',   v: '#ffffff',          use: 'Cards, modales, inputs' },
+  { n: '--color-border',  v: 'rgba(0,0,0,0.07)', use: 'Divisores sutiles' },
+  { n: '--color-border2', v: 'rgba(0,0,0,0.11)', use: 'Bordes con énfasis, hover' },
+  { n: '--color-text',    v: '#1a1916',          use: 'Texto principal, títulos' },
+  { n: '--color-text2',   v: '#6b6760',          use: 'Texto de apoyo, labels' },
+  { n: '--color-text3',   v: '#a8a49e',          use: 'Placeholders, metadata' },
+];
+
+const acentos = [
+  { n: '--color-accent',        v: '#f7fd9c',           use: 'Fondo de nav activo, seleccionado' },
+  { n: '--color-accent-dk',     v: '#d4e200',           use: 'Barra activa en tabs, progress' },
+  { n: '--color-accent-txt',    v: '#6b7200',           use: 'Texto sobre fondo accent' },
+  { n: '--color-accent-bg',     v: 'rgba(212,226,0,.10)', use: 'Fondo sutil de elementos acentuados' },
+];
+
+const estados = [
+  { nombre: 'Verde — OK / Activo', color: '#3d9970', desc: 'Turno activo, transmisión exitosa, stock OK',
+    variantes: [
+      { lbl: 'base',  var: '--color-green',        bg: '#3d9970',             border: 'transparent' },
+      { lbl: 'fondo', var: '--color-green-bg',     bg: 'rgba(61,153,112,.09)', border: 'rgba(61,153,112,.20)' },
+      { lbl: 'borde', var: '--color-green-border', bg: 'transparent',         border: '#3d9970', bw: '2px' },
+    ]},
+  { nombre: 'Rojo — Error / Crítico', color: '#c0392b', desc: 'Error DIAN, stock crítico, descuadre de caja',
+    variantes: [
+      { lbl: 'base',  var: '--color-red',        bg: '#c0392b',             border: 'transparent' },
+      { lbl: 'fondo', var: '--color-red-bg',     bg: 'rgba(192,57,43,.07)', border: 'rgba(192,57,43,.20)' },
+      { lbl: 'borde', var: '--color-red-border', bg: 'transparent',         border: '#c0392b', bw: '2px' },
+    ]},
+  { nombre: 'Ámbar — Advertencia', color: '#b7860b', desc: 'Stock bajo, lote próximo a vencer, offline',
+    variantes: [
+      { lbl: 'base',  var: '--color-amber',        bg: '#b7860b',              border: 'transparent' },
+      { lbl: 'fondo', var: '--color-amber-bg',     bg: 'rgba(183,134,11,.09)', border: 'rgba(183,134,11,.20)' },
+      { lbl: 'borde', var: '--color-amber-border', bg: 'transparent',          border: '#b7860b', bw: '2px' },
+    ]},
+  { nombre: 'Azul — Información', color: '#2471a3', desc: 'Traslado en camino, DIAN transmitiendo',
+    variantes: [
+      { lbl: 'base',  var: '--color-blue',        bg: '#2471a3',             border: 'transparent' },
+      { lbl: 'fondo', var: '--color-blue-bg',     bg: 'rgba(36,113,163,.07)', border: 'rgba(36,113,163,.18)' },
+      { lbl: 'borde', var: '--color-blue-border', bg: 'transparent',         border: '#2471a3', bw: '2px' },
+    ]},
+  { nombre: 'Púrpura — CDP / IA', color: '#534AB7', desc: 'Lotes CDP, clasificación IA, etiquetas especiales',
+    variantes: [
+      { lbl: 'base',  var: '--color-purple',        bg: '#534AB7',             border: 'transparent' },
+      { lbl: 'fondo', var: '--color-purple-bg',     bg: 'rgba(83,74,183,.09)', border: 'rgba(83,74,183,.22)' },
+      { lbl: 'borde', var: '--color-purple-border', bg: 'transparent',         border: '#534AB7', bw: '2px' },
+    ]},
+];
+
+const sombras = [
+  { var: '--shadow-sm', use: 'Topbar, sidenav, inputs — separación sutil',        cls: 'shadow-sm-card' },
+  { var: '--shadow-md', use: 'Cards en reposo — la sombra más usada del sistema', cls: 'shadow-md-card' },
+  { var: '--shadow-lg', use: 'Cards en hover, modales, dropdowns flotantes',      cls: 'shadow-lg-card' },
+];
+
+const radios = [
+  { var: '--radius',    val: '14px', r: '14px', use: 'Cards, modales, dropdowns, plano de mesas' },
+  { var: '--radius-sm', val: '9px',  r: '9px',  use: 'Badges, inputs, botones, nav items' },
+  { var: '--radius-xs', val: '5px',  r: '5px',  use: 'Chips pequeños, pills, estados en tabla' },
+];
+
+const typeScale = [
+  { var: '--text-xs',   px: '10px', w: '600', sample: 'ETIQUETA UPPERCASE',                    use: 'Labels, metadata, sección headers' },
+  { var: '--text-sm',   px: '11px', w: '400', sample: 'Texto de apoyo y notas secundarias',    use: 'Subtítulos, pie de cards' },
+  { var: '--text-base', px: '13px', w: '400', sample: 'Texto de contenido principal del sistema', use: 'Body, tablas, descripciones' },
+  { var: '--text-md',   px: '14px', w: '500', sample: 'Título de tabla y label de campo',      use: 'Column headers, form labels' },
+  { var: '--text-lg',   px: '16px', w: '700', sample: 'Total $580.000',                        use: 'Valores KPI, importes, totales' },
+  { var: '--text-xl',   px: '20px', w: '700', sample: 'KPI · 247',                             use: 'KPIs grandes, dashboard' },
+  { var: '--text-2xl',  px: '24px', w: '700', sample: 'Contabilidad',                          use: 'Títulos de pantalla' },
+  { var: '--text-3xl',  px: '32px', w: '700', sample: '$18.4M',                                use: 'Números grandes en dashboard' },
+];
+
+const spacingTokens = [
+  { var: '--space-1',  px: '4px',  use: 'Gap entre íconos y texto, padding de chips' },
+  { var: '--space-2',  px: '8px',  use: 'Gap en nav items, separación de tags' },
+  { var: '--space-3',  px: '12px', use: 'Padding de badges, gap en formularios compactos' },
+  { var: '--space-4',  px: '16px', use: 'Padding de nav items, gap estándar entre elementos' },
+  { var: '--space-5',  px: '20px', use: 'Padding interno de cards' },
+  { var: '--space-6',  px: '24px', use: 'Gap entre secciones de card, padding de modales' },
+  { var: '--space-8',  px: '32px', use: 'Gap entre cards, padding de toolbar' },
+  { var: '--space-10', px: '40px', use: 'Padding de contenido principal' },
+  { var: '--space-12', px: '48px', use: 'Gap entre secciones de pantalla' },
+  { var: '--space-16', px: '64px', use: 'Altura del topbar, margen entre módulos' },
+];
+
+const transiciones = [
+  { var: '--transition-fast',   val: '.12s ease',                       use: 'Hover de botones, cambio de color de borde',              cls: 'trans-fast' },
+  { var: '--transition-base',   val: '.20s ease',                       use: 'Toggle, cambio de tab, nav active state',                 cls: 'trans-base' },
+  { var: '--transition-spring', val: '.40s cubic-bezier(.22,1,.36,1)',  use: 'Aparición de cards y modales — el más característico de YARO', cls: 'trans-spring' },
+];
+
+const consoleColors = [
+  { name: 'bg',       color: '#0a0a0b' },
+  { name: 'bg2',      color: '#111114' },
+  { name: 'surface',  color: '#18181c' },
+  { name: 'white',    color: '#222228' },
+  { name: 'accent',   color: '#7c6af7' },
+  { name: 'accent-dk',color: '#a08cf8' },
+  { name: 'green',    color: '#22c55e' },
+  { name: 'red',      color: '#ef4444' },
+  { name: 'amber',    color: '#f59e0b' },
+  { name: 'blue',     color: '#38bdf8' },
+];
+
+const roadmapItems = [
+  { paso: 1, nombre: 'Paso 1 — Tokens',     desc: 'tokens.scss · variables CSS de color, sombra, radio, tipografía y espaciado',                                        pct: 100, done: true,  href: 'index.html' },
+  { paso: 2, nombre: 'Paso 2 — Base',       desc: 'reset.scss · typography.scss · animations.scss (floatUp, pulse, blink)',                                             pct: 100, done: true,  href: 'index.html' },
+  { paso: 3, nombre: 'Paso 3 — Átomos',     desc: 'YaroButton · YaroBadge · YaroInput · YaroToggle · YaroAvatar · YaroDelta',                                          pct: 100, done: true,  href: 'atoms.html' },
+  { paso: 4, nombre: 'Paso 4 — Moléculas',  desc: 'YaroCard · YaroKpi · YaroStatBar · YaroStockBar · YaroNavItem · YaroFormRow · YaroInfoBox',                         pct: 100, done: true,  href: 'molecules.html' },
+  { paso: 5, nombre: 'Paso 5 — Organismos', desc: 'YaroModal · YaroDataTable · YaroSidenav · YaroTopbar · YaroBienestarPicker · YaroConnectionBadge',                  pct: 100, done: true,  href: 'organisms.html' },
+];
+
+const progressSteps = [
+  { label: 'Paso 1 — Tokens',     pct: 100 },
+  { label: 'Paso 2 — Base',       pct: 100 },
+  { label: 'Paso 3 — Átomos',     pct: 100 },
+  { label: 'Paso 4 — Moléculas',  pct: 100 },
+  { label: 'Paso 5 — Organismos', pct: 100 },
+];
+
+/* ─── Renders ─────────────────────────────────────────────────────────────── */
+function renderTokenCard(t) {
+  return `
+    <div class="token-card" onclick="copyToken('var(${t.n})')">
+      <div class="token-swatch" style="background:${t.v};">
+        <div class="token-swatch-overlay">📋 copiar token</div>
+      </div>
+      <div class="token-info">
+        <div class="token-name">${t.n}</div>
+        <div class="token-val">${t.v}</div>
+        <div class="token-use">${t.use}</div>
+      </div>
+    </div>`;
+}
+
+function renderEstadoCard(e) {
+  const variantes = e.variantes.map(v => `
+    <div class="state-swatch" onclick="copyToken('var(${v.var})')">
+      <div class="state-swatch-bar" style="background:${v.bg};border:${v.bw||'1px'} solid ${v.border};"></div>
+      <div class="state-swatch-lbl">${v.lbl}</div>
+      <div class="state-swatch-var">${v.var}</div>
+    </div>`).join('');
+  return `
+    <div class="state-card">
+      <div class="state-head">
+        <div class="state-dot-lg" style="background:${e.color};"></div>
+        <div>
+          <div class="state-head-name">${e.nombre}</div>
+          <div class="state-head-desc">${e.desc}</div>
+        </div>
+      </div>
+      <div class="state-swatches">${variantes}</div>
+    </div>`;
+}
+
+function renderShadowCard(s) {
+  return `
+    <div class="shadow-card ${s.cls}" onclick="copyToken('var(${s.var})')">
+      <div class="shadow-demo-box"></div>
+      <div class="shadow-name">${s.var}</div>
+      <div class="shadow-use">${s.use}</div>
+      <div class="shadow-hint">Haz clic para copiar →</div>
+    </div>`;
+}
+
+function renderRadiusCard(r) {
+  return `
+    <div class="radius-card" onclick="copyToken('var(${r.var})')">
+      <div class="radius-preview" style="border-radius:${r.r};"></div>
+      <div class="radius-name">${r.var}</div>
+      <div class="radius-val">${r.val}</div>
+      <div class="radius-use">${r.use}</div>
+    </div>`;
+}
+
+function renderTypeRow(t) {
+  return `
+    <div class="type-row" onclick="copyToken('var(${t.var})')">
+      <div class="type-meta">
+        <div class="type-var">${t.var}</div>
+        <div class="type-px">${t.px} · w${t.w}</div>
+      </div>
+      <div class="type-sample" style="font-family:'Outfit',sans-serif;font-size:${t.px};font-weight:${t.w};">${t.sample}</div>
+      <div class="type-use">${t.use}</div>
+    </div>`;
+}
+
+function renderSpaceRow(s, i) {
+  return `
+    <div class="space-row" onclick="copyToken('var(${s.var})')">
+      <div class="space-var">${s.var}</div>
+      <div class="space-px">${s.px}</div>
+      <div class="space-right">
+        <div class="space-bar" style="width:${(i+1)*16}px;"></div>
+        <div class="space-use">${s.use}</div>
+      </div>
+    </div>`;
+}
+
+function renderTransCard(t) {
+  return `
+    <div class="trans-card" onclick="copyToken('var(${t.var})')">
+      <div class="trans-box ${t.cls}"></div>
+      <div class="trans-name">${t.var}</div>
+      <div class="trans-val">${t.val}</div>
+      <div class="trans-use">${t.use}</div>
+      <div class="trans-hint">Pasa el cursor para ver · Clic para copiar</div>
+    </div>`;
+}
+
+function renderProgressRows() {
+  return progressSteps.map(s => `
+    <div>
+      <div class="progress-row-label">
+        <span>${s.label}</span>
+        <span class="pct">${s.pct}%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${s.pct}%;"></div></div>
+    </div>`).join('');
+}
+
+function renderRoadmap() {
+  return roadmapItems.map((r, i) => `
+    <a class="roadmap-item ${r.done ? 'done' : ''}" href="${r.href}" style="animation-delay:${i * .07}s;">
+      <div class="roadmap-num ${r.done ? 'done' : 'pending'}">${r.done ? '✓' : r.paso}</div>
+      <div class="roadmap-body">
+        <div class="roadmap-name">${r.nombre}</div>
+        <div class="roadmap-desc">${r.desc}</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${r.pct}%;"></div></div>
+      </div>
+      <div class="roadmap-badge ${r.done ? 'badge-done' : 'badge-pending'}">${r.done ? 'Listo ✓' : 'Pendiente'}</div>
+    </a>`).join('');
+}
+
+/* ─── Init ────────────────────────────────────────────────────────────────── */
+document.getElementById('progress-rows').innerHTML    = renderProgressRows();
+document.getElementById('grid-superficies').innerHTML = superficies.map(renderTokenCard).join('');
+document.getElementById('grid-acento').innerHTML      = acentos.map(renderTokenCard).join('');
+document.getElementById('grid-estados').innerHTML     = estados.map(renderEstadoCard).join('');
+document.getElementById('grid-sombras').innerHTML     = sombras.map(renderShadowCard).join('');
+document.getElementById('grid-radios').innerHTML      = radios.map(renderRadiusCard).join('');
+document.getElementById('type-scale').innerHTML       = typeScale.map(renderTypeRow).join('');
+document.getElementById('space-rows').innerHTML       = spacingTokens.map((s, i) => renderSpaceRow(s, i)).join('');
+document.getElementById('trans-grid').innerHTML       = transiciones.map(renderTransCard).join('');
+document.getElementById('console-swatches').innerHTML = consoleColors.map(c => `
+  <div class="console-swatch">
+    <div class="console-dot" style="background:${c.color};"></div>
+    <div class="console-label">${c.name}</div>
+  </div>`).join('');
+document.getElementById('roadmap-items').innerHTML = renderRoadmap();
+</script>
+</body>
+</html>

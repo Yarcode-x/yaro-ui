@@ -1,0 +1,153 @@
+/* ─── YARO UI · layout.css ───────────────────────────────────────────────────
+   Topbar, sidenav, shell y sección principal.
+   Depende de base.css.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* ─── Topbar ─────────────────────────────────────────────────────────────── */
+.topbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  padding: 0 40px; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo-mark {
+  background: var(--color-accent);
+  color: var(--color-accent-txt);
+  font-size: 14px; font-weight: 700;
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+}
+.logo-name { font-size: 16px; font-weight: 400; color: var(--color-text2); }
+
+.topbar-chips { display: flex; gap: 8px; }
+.chip {
+  font-family: var(--font-mono); font-size: 11px;
+  padding: 4px 10px; border-radius: var(--radius-xs);
+  border: 1px solid var(--color-border2);
+  color: var(--color-text3);
+  background: var(--color-white);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+.chip:hover { color: var(--color-text2); background: var(--color-bg2); }
+.chip.active {
+  background: var(--color-accent-bg);
+  color: var(--color-accent-txt);
+  border-color: var(--color-accent-border);
+}
+
+/* ─── Shell ──────────────────────────────────────────────────────────────── */
+.shell { display: flex; min-height: calc(100vh - 60px); }
+
+/* ─── Sidenav ────────────────────────────────────────────────────────────── */
+.sidenav {
+  width: 220px; flex-shrink: 0;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  padding: 20px 0;
+  position: sticky; top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+.sn-section { padding: 0 12px; margin-bottom: 8px; }
+
+.sn-label {
+  font-size: 9px; font-weight: 600;
+  color: var(--color-text3);
+  text-transform: uppercase; letter-spacing: .12em;
+  padding: 0 8px;
+  margin-bottom: 4px; margin-top: 16px;
+  display: block;
+}
+.sn-label:first-child { margin-top: 0; }
+
+.sn-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 400;
+  color: var(--color-text2);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-bottom: 1px;
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+.sn-item:hover { background: var(--color-bg2); color: var(--color-text); }
+.sn-item.active {
+  background: var(--color-accent-bg);
+  color: var(--color-accent-txt);
+  border-color: var(--color-accent-border);
+  font-weight: 500;
+}
+
+.sn-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor; opacity: .5; flex-shrink: 0;
+}
+.sn-item.active .sn-dot { opacity: 1; }
+
+/* ─── Main ───────────────────────────────────────────────────────────────── */
+.main {
+  flex: 1;
+  padding: 40px 48px;
+  max-width: 1060px;
+}
+
+/* ─── Section ────────────────────────────────────────────────────────────── */
+.section {
+  margin-bottom: 56px;
+  scroll-margin-top: 80px;
+}
+
+/* ─── Intro card (progress) ──────────────────────────────────────────────── */
+.intro-wrap {
+  margin-bottom: 48px;
+  animation: fu .4s cubic-bezier(.22,1,.36,1) both;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+}
+.intro-title {
+  font-size: 30px; font-weight: 700;
+  letter-spacing: -.5px; margin-bottom: 10px;
+}
+.intro-desc {
+  font-size: 14px; font-weight: 300;
+  color: var(--color-text2);
+  line-height: 1.7; max-width: 500px;
+}
+.intro-desc strong { font-weight: 600; color: var(--color-text); }
+.intro-desc code {
+  font-family: var(--font-mono); font-size: 12px;
+  background: var(--color-bg2); padding: 2px 6px;
+  border-radius: 4px; color: var(--color-text);
+}
+
+.progress-card {
+  flex-shrink: 0;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  box-shadow: var(--shadow-md);
+  min-width: 210px;
+}
+.progress-card-title {
+  font-size: 10px; font-weight: 600;
+  color: var(--color-text3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 14px;
+}
+.progress-rows { display: flex; flex-direction: column; gap: 10px; }
+.progress-row-label {
+  display: flex; justify-content: space-between;
+  font-size: 12px; margin-bottom: 5px;
+}
+.progress-row-label span:first-child { font-weight: 600; color: var(--color-text); }
+.progress-row-label .pct { font-family: var(--font-mono); color: var(--color-accent-txt); }

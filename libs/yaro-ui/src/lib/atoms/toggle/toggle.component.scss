@@ -1,0 +1,69 @@
+:host { display: contents; }
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  user-select: none;
+
+  &--disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+// ─── Input nativo oculto ──────────────────────────────────────────
+.toggle-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+// ─── Track ────────────────────────────────────────────────────────
+.toggle-track {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  border-radius: 20px;
+  background: var(--color-border2);
+  border: 1px solid var(--color-border2);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-white);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-base);
+}
+
+// ─── Estado activo ────────────────────────────────────────────────
+.toggle-input:checked + .toggle-track {
+  background: var(--color-accent-dk);
+  border-color: var(--color-accent-dk);
+
+  .toggle-thumb { transform: translateX(16px); }
+}
+
+// ─── Focus visible ────────────────────────────────────────────────
+.toggle-input:focus-visible + .toggle-track {
+  outline: 2px solid var(--color-accent-dk);
+  outline-offset: 2px;
+}
+
+// ─── Label de texto ──────────────────────────────────────────────
+.toggle-label {
+  font-size: var(--text-base);
+  color: var(--color-text2);
+}

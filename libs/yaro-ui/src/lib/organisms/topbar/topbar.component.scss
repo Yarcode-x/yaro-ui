@@ -1,0 +1,61 @@
+:host { display: block; }
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  height: 60px;
+  padding: 0 var(--space-10);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+// ─── Zona izquierda: brand + título ───────────────────────────────────────────
+.topbar-start {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-shrink: 0;
+}
+
+.topbar-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.topbar-title {
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.2;
+}
+
+.topbar-subtitle {
+  font-size: var(--text-sm);
+  font-weight: 300;
+  color: var(--color-text3);
+  line-height: 1;
+}
+
+// ─── Zona central (búsqueda, breadcrumb…) ─────────────────────────────────────
+.topbar-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+// ─── Zona derecha: acciones, avatar, conexión ─────────────────────────────────
+.topbar-end {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}

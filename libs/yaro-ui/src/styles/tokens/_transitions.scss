@@ -1,0 +1,7 @@
+// @yaro/ui — Token de transiciones
+
+:root {
+  --transition-fast:   0.12s ease;
+  --transition-base:   0.20s ease;
+  --transition-spring: 0.40s cubic-bezier(0.22, 1, 0.36, 1); // El más característico de YARO
+}

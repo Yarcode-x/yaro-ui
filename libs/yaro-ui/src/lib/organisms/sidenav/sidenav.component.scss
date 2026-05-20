@@ -1,0 +1,72 @@
+:host { display: block; height: 100%; }
+
+.sidenav {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  width: 220px;
+  height: 100%;
+  overflow: hidden;
+  transition: width var(--transition-spring);
+
+  &--collapsed {
+    width: 56px;
+
+    .sidenav-section-label { display: none; }
+
+    // En modo colapsado los nav-items muestran solo el ícono
+    yaro-nav-item { justify-content: center; }
+  }
+}
+
+// ─── Brand slot (logo/nombre app) ─────────────────────────────────────────────
+.sidenav-brand {
+  padding: var(--space-4) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+// ─── Cuerpo scrolleable ───────────────────────────────────────────────────────
+.sidenav-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--space-3) var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+
+  &::-webkit-scrollbar       { width: 3px; }
+  &::-webkit-scrollbar-thumb { background: var(--color-border2); border-radius: 2px; }
+}
+
+// ─── Sección con label ────────────────────────────────────────────────────────
+.sidenav-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+
+  & + & { margin-top: var(--space-3); }
+}
+
+.sidenav-section-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--color-text3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 0 var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+// ─── Footer slot ──────────────────────────────────────────────────────────────
+.sidenav-footer {
+  padding: var(--space-3) var(--space-2);
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+}

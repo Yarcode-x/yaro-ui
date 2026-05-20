@@ -1,0 +1,106 @@
+:host { display: block; }
+
+// ─── Contenedor con scroll horizontal ────────────────────────────────────────
+.dt-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+// ─── Tabla ────────────────────────────────────────────────────────────────────
+.dt {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-base);
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+.dt-head {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dt-th {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  user-select: none;
+
+  &--sortable {
+    cursor: pointer;
+    &:hover { color: var(--color-text2); }
+  }
+
+  &--sorted { color: var(--color-accent-txt); }
+}
+
+.dt-th-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.dt-sort-icon {
+  font-size: 10px;
+  opacity: 0.6;
+}
+
+// ─── Body ─────────────────────────────────────────────────────────────────────
+.dt-body {}
+
+.dt-row {
+  border-bottom: 1px solid var(--color-border);
+  transition: background var(--transition-fast);
+
+  &:last-child { border-bottom: none; }
+
+  &--clickable {
+    cursor: pointer;
+    &:hover { background: var(--color-surface); }
+  }
+
+  &--skeleton {}
+}
+
+.dt-td {
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text);
+  vertical-align: middle;
+  white-space: nowrap;
+
+  &--number { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+}
+
+.dt-number {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+// ─── Estado vacío ─────────────────────────────────────────────────────────────
+.dt-empty {
+  padding: var(--space-10) var(--space-4);
+  text-align: center;
+  color: var(--color-text3);
+  font-size: var(--text-sm);
+  font-weight: 300;
+}
+
+// ─── Skeleton loading ─────────────────────────────────────────────────────────
+.dt-skeleton {
+  height: 14px;
+  background: var(--color-bg2);
+  border-radius: var(--radius-xs);
+  animation: dt-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes dt-shimmer {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.45; }
+  100% { opacity: 1; }
+}

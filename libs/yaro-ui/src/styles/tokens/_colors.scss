@@ -1,0 +1,95 @@
+// @yaro/ui — Token de colores
+// Nunca usar hex directamente en componentes. Siempre var(--color-*)
+
+:root {
+
+  // ─── Superficies ───────────────────────────────────────────────
+  --color-bg:       #f0ede8;   // Fondo del body
+  --color-bg2:      #ece9e3;   // Topbar, sidenav, toolbar
+  --color-surface:  #faf9f7;   // Secciones, fondos de formulario
+  --color-white:    #ffffff;   // Cards, modales, inputs
+
+  // ─── Bordes ────────────────────────────────────────────────────
+  --color-border:   rgba(0, 0, 0, 0.07);
+  --color-border2:  rgba(0, 0, 0, 0.11);
+
+  // ─── Texto ─────────────────────────────────────────────────────
+  --color-text:     #1a1916;   // Texto principal, títulos
+  --color-text2:    #6b6760;   // Texto de apoyo, labels
+  --color-text3:    #a8a49e;   // Placeholders, metadata
+
+  // ─── Acento (verde-limón cálido, identidad YARO) ───────────────
+  --color-accent:         #f7fd9c;
+  --color-accent-dk:      #d4e200;
+  --color-accent-txt:     #6b7200;
+  --color-accent-bg:      rgba(212, 226, 0, 0.10);
+  --color-accent-border:  rgba(212, 226, 0, 0.28);
+
+  // ─── Estados ───────────────────────────────────────────────────
+
+  // Verde — OK / Activo
+  --color-green:         #3d9970;
+  --color-green-bg:      rgba(61, 153, 112, 0.09);
+  --color-green-border:  rgba(61, 153, 112, 0.20);
+
+  // Rojo — Error / Crítico
+  --color-red:           #c0392b;
+  --color-red-bg:        rgba(192, 57, 43, 0.07);
+  --color-red-border:    rgba(192, 57, 43, 0.20);
+
+  // Ámbar — Advertencia
+  --color-amber:         #b7860b;
+  --color-amber-bg:      rgba(183, 134, 11, 0.09);
+  --color-amber-border:  rgba(183, 134, 11, 0.20);
+
+  // Azul — Información
+  --color-blue:          #2471a3;
+  --color-blue-bg:       rgba(36, 113, 163, 0.07);
+  --color-blue-border:   rgba(36, 113, 163, 0.18);
+
+  // Púrpura — CDP / IA
+  --color-purple:        #534ab7;
+  --color-purple-bg:     rgba(83, 74, 183, 0.09);
+  --color-purple-border: rgba(83, 74, 183, 0.22);
+}
+
+// ─── Tema Console (oscuro) ─────────────────────────────────────────
+[data-theme="console"] {
+  --color-bg:       #0a0a0b;
+  --color-bg2:      #111114;
+  --color-surface:  #18181c;
+  --color-white:    #222228;
+
+  --color-border:   rgba(255, 255, 255, 0.06);
+  --color-border2:  rgba(255, 255, 255, 0.10);
+
+  --color-text:     #e8e8ec;
+  --color-text2:    #9898a8;
+  --color-text3:    #5a5a6a;
+
+  --color-accent:         #7c6af7;
+  --color-accent-dk:      #a08cf8;
+  --color-accent-txt:     #e8e4ff;
+  --color-accent-bg:      rgba(124, 106, 247, 0.12);
+  --color-accent-border:  rgba(124, 106, 247, 0.30);
+
+  --color-green:         #22c55e;
+  --color-green-bg:      rgba(34, 197, 94, 0.10);
+  --color-green-border:  rgba(34, 197, 94, 0.22);
+
+  --color-red:           #ef4444;
+  --color-red-bg:        rgba(239, 68, 68, 0.10);
+  --color-red-border:    rgba(239, 68, 68, 0.22);
+
+  --color-amber:         #f59e0b;
+  --color-amber-bg:      rgba(245, 158, 11, 0.10);
+  --color-amber-border:  rgba(245, 158, 11, 0.22);
+
+  --color-blue:          #38bdf8;
+  --color-blue-bg:       rgba(56, 189, 248, 0.10);
+  --color-blue-border:   rgba(56, 189, 248, 0.22);
+
+  --color-purple:        #a78bfa;
+  --color-purple-bg:     rgba(167, 139, 250, 0.10);
+  --color-purple-border: rgba(167, 139, 250, 0.22);
+}

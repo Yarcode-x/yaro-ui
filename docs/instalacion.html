@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@yaro/ui — Instalación</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <style>
+    /* ── Pasos de instalación ───────────────────────────────────── */
+    .steps { display: flex; flex-direction: column; gap: 12px; }
+
+    .step {
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      animation: fu .4s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    .step-header {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 20px 24px 20px 20px;
+    }
+
+    .step-num {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+      background: var(--color-accent); color: var(--color-accent-txt);
+      font-size: 14px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .step-body { flex: 1; }
+    .step-title { font-size: 15px; font-weight: 600; margin-bottom: 5px; }
+    .step-desc  { font-size: 13px; font-weight: 300; color: var(--color-text2); line-height: 1.6; }
+    .step-desc code {
+      font-family: var(--font-mono); font-size: 11px;
+      background: var(--color-bg2); padding: 2px 5px;
+      border-radius: 4px; color: var(--color-text);
+    }
+
+    .step-file {
+      font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+      color: var(--color-text3); text-transform: uppercase;
+      letter-spacing: .08em; margin-bottom: 8px;
+      padding: 0 24px 0 68px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .step-file::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent-dk); }
+
+    /* ── Code block ─────────────────────────────────────────────── */
+    .code-wrap { position: relative; }
+
+    .copy-btn {
+      position: absolute; top: 10px; right: 10px;
+      font-family: var(--font-mono); font-size: 10px;
+      padding: 4px 10px; border-radius: var(--radius-xs);
+      border: 1px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.5);
+      cursor: pointer; z-index: 2;
+      transition: all var(--transition-fast);
+    }
+    .copy-btn:hover { background: rgba(255,255,255,.15); color: rgba(255,255,255,.8); }
+
+    .code-block {
+      margin: 0;
+      padding: 18px 24px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 12px; line-height: 1.8;
+      background: #1a1916;
+      color: #d4d0cb;
+    }
+    /* Solo en el último paso el código tiene borde-radio abajo */
+    .step:last-child .code-block { border-radius: 0 0 var(--radius) var(--radius); }
+
+    /* Syntax highlighting */
+    .k  { color: #7c6af7; }  /* keyword, decorador */
+    .s  { color: #d4e200; }  /* string */
+    .c  { color: #6b6760; font-style: italic; }  /* comentario */
+    .t  { color: #22c55e; }  /* tipo / selector */
+    .p  { color: #f7a76c; }  /* propiedad */
+    .v  { color: #38bdf8; }  /* valor numérico / variable */
+
+    /* ── Nota info ──────────────────────────────────────────────── */
+    .info-note {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 14px 16px;
+      background: var(--color-blue-bg);
+      border: 1px solid var(--color-blue-border);
+      border-radius: var(--radius-sm);
+      font-size: 13px; color: var(--color-blue);
+      margin-bottom: 28px;
+    }
+    .info-note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .info-note strong { font-weight: 600; }
+
+    /* ── Estructura de carpetas ─────────────────────────────────── */
+    .tree-wrap {
+      background: #1a1916; border-radius: var(--radius);
+      padding: 20px 24px; margin-top: 20px;
+      font-family: var(--font-mono); font-size: 12px;
+      line-height: 2; color: #d4d0cb;
+    }
+    .tree-wrap .dir   { color: #7c6af7; }
+    .tree-wrap .file  { color: #d4d0cb; }
+    .tree-wrap .note  { color: #6b6760; font-style: italic; }
+    .tree-wrap .hl    { color: #d4e200; }
+
+    /* ── Quick reference ────────────────────────────────────────── */
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .quick-card {
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .quick-card-title { font-size: 12px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+    .quick-card-badge {
+      font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: 500;
+      background: var(--color-accent-bg); color: var(--color-accent-txt);
+      border: 1px solid var(--color-accent-border);
+    }
+    .quick-card-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .quick-card-list li { font-size: 12px; color: var(--color-text2); font-family: var(--font-mono); }
+    .quick-card-list li::before { content: '→ '; color: var(--color-text3); }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark">yaro/ui</div>
+    <span class="logo-name">sistema de diseño</span>
+  </div>
+  <div class="topbar-chips">
+    <a href="index.html"       class="chip">Tokens</a>
+    <a href="instalacion.html" class="chip active">Instalación</a>
+    <a href="atoms.html"       class="chip">Átomos</a>
+    <a href="molecules.html"   class="chip">Moléculas</a>
+    <a href="organisms.html"   class="chip">Organismos</a>
+    <span class="chip">v1.0.0</span>
+  </div>
+</div>
+
+<div class="shell">
+
+  <!-- SIDENAV -->
+  <nav class="sidenav">
+    <div class="sn-section">
+      <span class="sn-label">Instalación</span>
+      <div class="sn-item active" data-id="setup" onclick="scrollToSection('setup', this)">
+        <div class="sn-dot"></div>Configuración inicial
+      </div>
+      <div class="sn-item" data-id="paso1" onclick="scrollToSection('paso1', this)">
+        <div class="sn-dot"></div>1 · Path alias
+      </div>
+      <div class="sn-item" data-id="paso2" onclick="scrollToSection('paso2', this)">
+        <div class="sn-dot"></div>2 · Estilos globales
+      </div>
+      <div class="sn-item" data-id="paso3" onclick="scrollToSection('paso3', this)">
+        <div class="sn-dot"></div>3 · Google Fonts
+      </div>
+      <div class="sn-item" data-id="paso4" onclick="scrollToSection('paso4', this)">
+        <div class="sn-dot"></div>4 · Importar componentes
+      </div>
+      <span class="sn-label">Referencia</span>
+      <div class="sn-item" data-id="estructura" onclick="scrollToSection('estructura', this)">
+        <div class="sn-dot"></div>Estructura de archivos
+      </div>
+      <div class="sn-item" data-id="componentes" onclick="scrollToSection('componentes', this)">
+        <div class="sn-dot"></div>Todos los componentes
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- INTRO -->
+    <div style="margin-bottom: 40px; animation: fu .4s cubic-bezier(.22,1,.36,1) both;">
+      <div class="section-title">Instalación</div>
+      <p class="section-desc">
+        <code>@yaro/ui</code> es una librería de componentes Angular standalone dentro del monorepo Nx.
+        No se publica en npm — se consume directamente vía path alias desde el workspace.
+        Sigue estos 4 pasos y tendrás acceso a todos los componentes.
+      </p>
+    </div>
+
+    <div class="info-note">
+      <span class="info-note-icon">ℹ</span>
+      <div>
+        <strong>Requisitos:</strong> Angular 17+ · Nx workspace · Node 18+.
+        La librería usa <code>@if</code> / <code>@for</code> de la nueva sintaxis de control flow — no requiere <code>CommonModule</code>.
+      </div>
+    </div>
+
+    <!-- CONFIGURACIÓN INICIAL -->
+    <div class="section" id="setup">
+      <div class="section-title">Configuración inicial</div>
+      <div class="section-desc">Cuatro pasos, todos en archivos de configuración existentes. No es necesario instalar nada nuevo.</div>
+    </div>
+
+    <!-- PASOS -->
+    <div class="steps">
+
+      <!-- PASO 1 -->
+      <div class="step" id="paso1" style="animation-delay: .05s;">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Path alias en <code>tsconfig.base.json</code></div>
+            <div class="step-desc">
+              Registra el alias <code>@yaro/ui</code> para que TypeScript sepa resolver los imports.
+              El alias apunta al barrel <code>index.ts</code> de la librería.
+            </div>
+          </div>
+        </div>
+        <div class="step-file">tsconfig.base.json</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre class="code-block">{
+  <span class="p">"compilerOptions"</span>: {
+    <span class="p">"paths"</span>: {
+      <span class="s">"@yaro/ui"</span>: [<span class="s">"libs/yaro-ui/src/index.ts"</span>]
+    }
+  }
+}</pre>
+        </div>
+      </div>
+
+      <!-- PASO 2 -->
+      <div class="step" id="paso2" style="animation-delay: .10s;">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Estilos globales en <code>angular.json</code></div>
+            <div class="step-desc">
+              Agrega <code>yaro-ui.scss</code> <strong>antes</strong> que <code>styles.scss</code>
+              para que los tokens CSS estén disponibles cuando carguen los estilos de la aplicación.
+            </div>
+          </div>
+        </div>
+        <div class="step-file">angular.json</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre class="code-block">{
+  <span class="p">"projects"</span>: {
+    <span class="p">"mi-app"</span>: {
+      <span class="p">"architect"</span>: {
+        <span class="p">"build"</span>: {
+          <span class="p">"options"</span>: {
+            <span class="p">"styles"</span>: [
+              <span class="s">"libs/yaro-ui/src/styles/yaro-ui.scss"</span>, <span class="c">// ← primero</span>
+              <span class="s">"src/styles.scss"</span>
+            ]
+          }
+        }
+      }
+    }
+  }
+}</pre>
+        </div>
+      </div>
+
+      <!-- PASO 3 -->
+      <div class="step" id="paso3" style="animation-delay: .15s;">
+        <div class="step-header">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Google Fonts en <code>index.html</code></div>
+            <div class="step-desc">
+              YARO usa <strong>Outfit</strong> (principal) y <strong>JetBrains Mono</strong> (numérico/código).
+              Agrega este link en el <code>&lt;head&gt;</code> de tu aplicación.
+            </div>
+          </div>
+        </div>
+        <div class="step-file">src/index.html</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre class="code-block"><span class="t">&lt;head&gt;</span>
+  <span class="t">&lt;link</span> <span class="p">rel</span>=<span class="s">"preconnect"</span> <span class="p">href</span>=<span class="s">"https://fonts.googleapis.com"</span><span class="t">&gt;</span>
+  <span class="t">&lt;link</span> <span class="p">rel</span>=<span class="s">"preconnect"</span> <span class="p">href</span>=<span class="s">"https://fonts.gstatic.com"</span> <span class="p">crossorigin</span><span class="t">&gt;</span>
+  <span class="t">&lt;link</span>
+    <span class="p">href</span>=<span class="s">"https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap"</span>
+    <span class="p">rel</span>=<span class="s">"stylesheet"</span>
+  <span class="t">&gt;</span>
+<span class="t">&lt;/head&gt;</span></pre>
+        </div>
+      </div>
+
+      <!-- PASO 4 -->
+      <div class="step" id="paso4" style="animation-delay: .20s;">
+        <div class="step-header">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">Importar componentes en tu feature</div>
+            <div class="step-desc">
+              Todos los componentes son <strong>standalone</strong>. Impórtalos directamente en el array
+              <code>imports</code> del componente que los use. No hay módulo que registrar.
+            </div>
+          </div>
+        </div>
+        <div class="step-file">mi-feature.component.ts</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre class="code-block"><span class="k">import</span> {
+  YaroButtonComponent,
+  YaroBadgeComponent,
+  YaroInputComponent,
+  YaroCardComponent,
+  YaroKpiComponent,
+} <span class="k">from</span> <span class="s">'@yaro/ui'</span>;
+
+<span class="k">@Component</span>({
+  <span class="p">selector</span>: <span class="s">'app-mi-feature'</span>,
+  <span class="p">standalone</span>: <span class="v">true</span>,
+  <span class="p">imports</span>: [
+    YaroButtonComponent,
+    YaroBadgeComponent,
+    YaroInputComponent,
+    YaroCardComponent,
+    YaroKpiComponent,
+  ],
+  <span class="p">template</span>: <span class="s">`
+    &lt;yaro-card title="Ventas hoy"&gt;
+      &lt;yaro-kpi label="Total" value="$1.240.000" [delta]="8.3" /&gt;
+    &lt;/yaro-card&gt;
+    &lt;yaro-button variant="primary"&gt;Guardar&lt;/yaro-button&gt;
+  `</span>,
+})
+<span class="k">export class</span> <span class="t">MiFeatureComponent</span> {}</pre>
+        </div>
+      </div>
+
+    </div><!-- /steps -->
+
+    <!-- ESTRUCTURA DE ARCHIVOS -->
+    <div class="section" id="estructura" style="margin-top: 56px;">
+      <div class="section-title">Estructura de archivos</div>
+      <div class="section-desc">Así está organizada la librería dentro del monorepo Nx.</div>
+      <div class="tree-wrap">
+<span class="dir">libs/yaro-ui/</span>
+├── <span class="hl">src/</span>
+│   ├── <span class="hl">index.ts</span>                    <span class="note">← barrel export (punto de entrada)</span>
+│   ├── <span class="dir">styles/</span>
+│   │   ├── <span class="file">yaro-ui.scss</span>            <span class="note">← entry de estilos (@use tokens + base)</span>
+│   │   ├── <span class="dir">tokens/</span>
+│   │   │   ├── <span class="file">_colors.scss</span>
+│   │   │   ├── <span class="file">_typography.scss</span>
+│   │   │   ├── <span class="file">_spacing.scss</span>
+│   │   │   ├── <span class="file">_shadows.scss</span>
+│   │   │   ├── <span class="file">_radii.scss</span>
+│   │   │   └── <span class="file">_transitions.scss</span>
+│   │   └── <span class="dir">base/</span>
+│   │       ├── <span class="file">_reset.scss</span>
+│   │       ├── <span class="file">_typography.scss</span>
+│   │       └── <span class="file">_animations.scss</span>
+│   └── <span class="dir">lib/</span>
+│       ├── <span class="dir">atoms/</span>       <span class="note">← button, badge, input, toggle, avatar, delta</span>
+│       ├── <span class="dir">molecules/</span>  <span class="note">← card, kpi, stat-bar, stock-bar, nav-item, form-row, info-box</span>
+│       └── <span class="dir">organisms/</span>  <span class="note">← modal, data-table, sidenav, topbar, bienestar-picker, connection-badge</span>
+├── <span class="file">ng-package.json</span>             <span class="note">← entryFile: src/index.ts</span>
+├── <span class="file">package.json</span>                <span class="note">← name: "@yaro/ui"</span>
+└── <span class="file">project.json</span>                <span class="note">← Nx config (build / test / lint)</span>
+      </div>
+    </div>
+
+    <!-- TODOS LOS COMPONENTES -->
+    <div class="section" id="componentes">
+      <div class="section-title">Referencia rápida — todos los componentes</div>
+      <div class="section-desc">Todos se importan desde <code style="font-family:var(--font-mono);font-size:12px;background:var(--color-bg2);padding:2px 6px;border-radius:4px;">@yaro/ui</code>.</div>
+
+      <div class="quick-grid" id="quick-grid"></div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<div class="toast" id="toast"></div>
+
+<script src="js/main.js"></script>
+<script>
+const componentGroups = [
+  {
+    label: 'Átomos', href: 'atoms.html',
+    items: [
+      'YaroButtonComponent',
+      'YaroBadgeComponent',
+      'YaroInputComponent',
+      'YaroToggleComponent',
+      'YaroAvatarComponent',
+      'YaroDeltaComponent',
+    ],
+  },
+  {
+    label: 'Moléculas', href: 'molecules.html',
+    items: [
+      'YaroCardComponent',
+      'YaroKpiComponent',
+      'YaroStatBarComponent',
+      'YaroStockBarComponent',
+      'YaroNavItemComponent',
+      'YaroFormRowComponent',
+      'YaroInfoBoxComponent',
+    ],
+  },
+  {
+    label: 'Organismos', href: 'organisms.html',
+    items: [
+      'YaroModalComponent',
+      'YaroDataTableComponent',
+      'YaroSidenavComponent',
+      'YaroTopbarComponent',
+      'YaroBienestarPickerComponent',
+      'YaroConnectionBadgeComponent',
+    ],
+  },
+];
+
+document.getElementById('quick-grid').innerHTML = componentGroups.map(g => `
+  <div class="quick-card">
+    <div class="quick-card-title">
+      ${g.label}
+      <a href="${g.href}" class="quick-card-badge">${g.items.length} componentes →</a>
+    </div>
+    <ul class="quick-card-list">
+      ${g.items.map(i => `<li>${i}</li>`).join('')}
+    </ul>
+  </div>`).join('');
+</script>
+</body>
+</html>

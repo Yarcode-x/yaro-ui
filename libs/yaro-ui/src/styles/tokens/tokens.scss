@@ -1,0 +1,9 @@
+// @yaro/ui — tokens.scss
+// Punto de entrada de tokens. No importar parciales individuales en los componentes.
+
+@use 'colors';
+@use 'typography';
+@use 'spacing';
+@use 'shadows';
+@use 'radii';
+@use 'transitions';

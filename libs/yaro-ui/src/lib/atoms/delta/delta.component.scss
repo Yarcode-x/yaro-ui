@@ -1,0 +1,28 @@
+:host { display: contents; }
+
+.delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  line-height: 1;
+
+  &--positive {
+    color: var(--color-green);
+  }
+
+  &--negative {
+    color: var(--color-red);
+  }
+}
+
+.delta-arrow {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.delta-value {
+  font-variant-numeric: tabular-nums;
+}

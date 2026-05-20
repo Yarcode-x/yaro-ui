@@ -1,0 +1,16 @@
+// @yaro/ui — Token de tipografía
+// Outfit para todo el UI. JetBrains Mono solo para valores numéricos, código y Console.
+
+:root {
+  --font-sans: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --text-xs:   10px;  // Labels uppercase, metadata
+  --text-sm:   11px;  // Texto de apoyo, pie de cards
+  --text-base: 13px;  // Body, tablas, descripciones
+  --text-md:   14px;  // Column headers, form labels
+  --text-lg:   16px;  // Valores KPI, importes, totales
+  --text-xl:   20px;  // KPIs grandes, dashboard
+  --text-2xl:  24px;  // Títulos de pantalla
+  --text-3xl:  32px;  // Números grandes en dashboard
+}

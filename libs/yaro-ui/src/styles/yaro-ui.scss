@@ -1,0 +1,12 @@
+// @yaro/ui — stylesheet principal
+// Registrar en angular.json del proyecto consumidor:
+//
+//   "styles": [
+//     "node_modules/@yaro/ui/src/styles/yaro-ui.scss"
+//   ]
+//
+// O en el styles.scss global del app:
+//   @use '@yaro/ui/src/styles/yaro-ui';
+
+@use 'tokens/tokens';
+@use 'base/base';

@@ -1,0 +1,52 @@
+:host { display: block; }
+
+.stock-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.stock-bar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.stock-bar-label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text2);
+}
+
+.stock-bar-count {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.stock-bar-current { font-weight: 600; }
+.stock-bar-sep     { color: var(--color-text3); margin: 0 1px; }
+.stock-bar-max     { color: var(--color-text3); }
+
+.stock-bar-track {
+  height: 6px;
+  background: var(--color-bg2);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.stock-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width var(--transition-spring);
+}
+
+// ─── Colores automáticos por nivel ────────────────────────────────
+.stock-bar--ok       .stock-bar-fill { background: var(--color-green); }
+.stock-bar--low      .stock-bar-fill { background: var(--color-amber); }
+.stock-bar--critical .stock-bar-fill { background: var(--color-red); }
+
+.stock-bar--ok       .stock-bar-current { color: var(--color-green); }
+.stock-bar--low      .stock-bar-current { color: var(--color-amber); }
+.stock-bar--critical .stock-bar-current { color: var(--color-red); }
