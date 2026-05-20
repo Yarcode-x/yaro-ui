@@ -25,13 +25,12 @@ export interface SidenavSection {
     <nav
       class="sidenav"
       [class.sidenav--collapsed]="collapsed"
+      [class.sidenav--mobile-open]="mobileOpen"
       [attr.aria-label]="navLabel">
 
-      @if (!collapsed) {
-        <div class="sidenav-brand">
-          <ng-content select="[sidenav-brand]" />
-        </div>
-      }
+      <div class="sidenav-brand">
+        <ng-content select="[sidenav-brand]" />
+      </div>
 
       <div class="sidenav-body">
         @for (section of sections; track section.label ?? $index) {
@@ -47,7 +46,7 @@ export interface SidenavSection {
                 [badge]="collapsed ? '' : (item.badge ?? '')"
                 [badgeIntent]="item.badgeIntent ?? 'accent'"
                 [attr.title]="collapsed ? item.label : null"
-                (itemClick)="selectItem(item.id)" />
+                (itemClick)="onItemClick(item.id)" />
             }
           </div>
         }
@@ -57,16 +56,29 @@ export interface SidenavSection {
         <ng-content select="[sidenav-footer]" />
       </div>
     </nav>
+
+    <div
+      class="sidenav-overlay"
+      aria-hidden="true"
+      (click)="mobileClose.emit()">
+    </div>
   `,
 })
 export class YaroSidenavComponent {
-  @Input() sections:  SidenavSection[] = [];
-  @Input() activeId:  string           = '';
-  @Input() collapsed: boolean          = false;
-  @Input() navLabel:  string           = 'Navegación principal';
+  @Input() sections:   SidenavSection[] = [];
+  @Input() activeId:   string           = '';
+  @Input() collapsed:  boolean          = false;
+  @Input() mobileOpen: boolean          = false;
+  @Input() navLabel:   string           = 'Navegación principal';
 
-  @Output() itemSelect    = new EventEmitter<string>();
+  @Output() itemSelect     = new EventEmitter<string>();
   @Output() toggleCollapse = new EventEmitter<void>();
+  @Output() mobileClose    = new EventEmitter<void>();
+
+  onItemClick(id: string): void {
+    this.itemSelect.emit(id);
+    this.mobileClose.emit();
+  }
 
   selectItem(id: string): void {
     this.itemSelect.emit(id);

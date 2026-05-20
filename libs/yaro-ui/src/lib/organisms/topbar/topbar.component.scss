@@ -13,6 +13,12 @@
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   box-shadow: var(--shadow-sm);
+
+  @media (max-width: 767px) {
+    height: 56px;
+    padding: 0 var(--space-4);
+    gap: var(--space-3);
+  }
 }
 
 // ─── Zona izquierda: brand + título ───────────────────────────────────────────
@@ -50,6 +56,8 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
+
+  @media (max-width: 767px) { display: none; }
 }
 
 // ─── Zona derecha: acciones, avatar, conexión ─────────────────────────────────
@@ -58,4 +66,48 @@
   align-items: center;
   gap: var(--space-3);
   flex-shrink: 0;
+}
+
+// ─── Botón hamburguesa (solo móvil) ───────────────────────────────────────────
+.topbar-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: var(--color-text2);
+  transition: background var(--transition-fast);
+
+  &:hover { background: var(--color-bg2); }
+  &:focus-visible { outline: 2px solid var(--color-accent-dk); outline-offset: 2px; }
+
+  @media (max-width: 767px) { display: flex; }
+}
+
+.topbar-menu-icon,
+.topbar-menu-icon::before,
+.topbar-menu-icon::after {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform var(--transition-fast);
+}
+
+.topbar-menu-icon {
+  position: relative;
+
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+  &::before { top: -6px; }
+  &::after  { top:  6px; }
 }

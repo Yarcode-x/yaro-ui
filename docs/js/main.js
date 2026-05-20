@@ -56,10 +56,10 @@ function initScrollSpy() {
 function switchTab(tabEl, panelId) {
   const card = tabEl.closest('.comp-card');
   card.querySelectorAll('.comp-tab').forEach(t => t.classList.remove('active'));
-  card.querySelectorAll('.comp-panel').forEach(p => p.classList.add('hidden'));
+  card.querySelectorAll('.comp-panel').forEach(p => p.classList.remove('active'));
   tabEl.classList.add('active');
   const panel = document.getElementById(panelId);
-  if (panel) panel.classList.remove('hidden');
+  if (panel) panel.classList.add('active');
 }
 
 /* ─── Init ───────────────────────────────────────────────────────────────── */

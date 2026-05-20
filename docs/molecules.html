@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@yaro/ui — Moléculas</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — compartidas
+       ════════════════════════════════════════════════════════════ */
+    .d-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: var(--font-sans); font-weight: 500; font-size: 11px;
+      padding: 3px 10px; border-radius: 20px; border: 1px solid;
+    }
+    .d-badge-accent  { background: var(--color-accent-bg);  color: var(--color-accent-txt); border-color: var(--color-accent-border); }
+    .d-badge-green   { background: var(--color-green-bg);   color: var(--color-green);      border-color: var(--color-green-border); }
+    .d-badge-red     { background: var(--color-red-bg);     color: var(--color-red);        border-color: var(--color-red-border); }
+    .d-badge-amber   { background: var(--color-amber-bg);   color: var(--color-amber);      border-color: var(--color-amber-border); }
+    .d-badge-blue    { background: var(--color-blue-bg);    color: var(--color-blue);       border-color: var(--color-blue-border); }
+    .d-badge-neutral { background: var(--color-bg2);        color: var(--color-text2);      border-color: var(--color-border2); }
+
+    .d-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--font-sans); font-size: 12px; font-weight: 500;
+      padding: 6px 14px; border-radius: var(--radius-sm); border: none; cursor: pointer;
+    }
+    .d-btn-primary   { background: var(--color-accent); color: var(--color-accent-txt); }
+    .d-btn-secondary { background: transparent; color: var(--color-text); border: 1px solid var(--color-border2); }
+    .d-btn-ghost     { background: transparent; color: var(--color-text2); }
+
+    .d-delta { display: inline-flex; align-items: center; gap: 3px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
+    .d-delta-up   { color: var(--color-green); }
+    .d-delta-down { color: var(--color-red); }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroCard
+       ════════════════════════════════════════════════════════════ */
+    .d-card {
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      overflow: hidden; min-width: 200px;
+    }
+    .d-card-header {
+      padding: 14px 18px 0;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .d-card-title { font-size: 13px; font-weight: 600; color: var(--color-text2); }
+    .d-card-body  { padding: 12px 18px 18px; }
+    .d-card-footer {
+      padding: 10px 18px;
+      border-top: 1px solid var(--color-border);
+      display: flex; justify-content: flex-end; gap: 8px;
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroKpi
+       ════════════════════════════════════════════════════════════ */
+    .d-kpi {
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      padding: 18px 20px; min-width: 160px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .d-kpi-label   { font-size: 11px; color: var(--color-text3); font-weight: 400; }
+    .d-kpi-value   { font-size: 26px; font-weight: 700; color: var(--color-text); letter-spacing: -.5px; font-family: var(--font-mono); line-height: 1.1; }
+    .d-kpi-meta    { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+    .d-kpi-compare { font-size: 11px; color: var(--color-text3); }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroStatBar
+       ════════════════════════════════════════════════════════════ */
+    .d-statbar { min-width: 220px; }
+    .d-statbar-header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 7px;
+    }
+    .d-statbar-label { font-size: 12px; font-weight: 500; color: var(--color-text2); }
+    .d-statbar-pct   { font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
+    .d-statbar-track { height: 8px; border-radius: 4px; background: var(--color-bg2); overflow: hidden; }
+    .d-statbar-fill  { height: 100%; border-radius: 4px; transition: width .4s var(--transition-spring); }
+
+    .d-bar-green  { background: var(--color-green); }
+    .d-bar-amber  { background: var(--color-amber); }
+    .d-bar-red    { background: var(--color-red); }
+    .d-bar-blue   { background: var(--color-blue); }
+    .d-bar-accent { background: var(--color-accent-dk); }
+
+    .d-pct-green  { color: var(--color-green); }
+    .d-pct-amber  { color: var(--color-amber); }
+    .d-pct-red    { color: var(--color-red); }
+    .d-pct-blue   { color: var(--color-blue); }
+    .d-pct-accent { color: var(--color-accent-txt); }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroStockBar
+       ════════════════════════════════════════════════════════════ */
+    .d-stockbar { min-width: 200px; }
+    .d-stockbar-header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 5px;
+    }
+    .d-stockbar-label  { font-size: 12px; color: var(--color-text2); }
+    .d-stockbar-amount { font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
+    .d-stockbar-track  { height: 6px; border-radius: 3px; background: var(--color-bg2); overflow: hidden; margin-bottom: 4px; }
+    .d-stockbar-fill   { height: 100%; border-radius: 3px; }
+    .d-stockbar-status { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroNavItem
+       ════════════════════════════════════════════════════════════ */
+    .d-nav { display: flex; flex-direction: column; gap: 2px; min-width: 180px; }
+    .d-navitem {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 400; color: var(--color-text2);
+      cursor: pointer; border: 1px solid transparent;
+      transition: all var(--transition-fast);
+    }
+    .d-navitem:hover { background: var(--color-bg2); color: var(--color-text); }
+    .d-navitem.active {
+      background: var(--color-accent-bg); color: var(--color-accent-txt);
+      border-color: var(--color-accent-border); font-weight: 500;
+    }
+    .d-navitem-icon { font-size: 15px; }
+    .d-navitem-label { flex: 1; }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroFormRow
+       ════════════════════════════════════════════════════════════ */
+    .d-formrow { width: 100%; }
+    .d-formrow-header { margin-bottom: 8px; }
+    .d-formrow-label {
+      font-size: 13px; font-weight: 600; color: var(--color-text);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .d-formrow-req { color: var(--color-red); font-size: 12px; }
+    .d-formrow-hint { font-size: 11px; color: var(--color-text3); margin-top: 2px; }
+    .d-formrow-grid { display: grid; gap: 12px; }
+    .d-formrow-cols-1 { grid-template-columns: 1fr; }
+    .d-formrow-cols-2 { grid-template-columns: 1fr 1fr; }
+    .d-formrow-cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .d-input {
+      font-family: var(--font-sans); font-size: 13px;
+      padding: 9px 12px; border: 1px solid var(--color-border2);
+      border-radius: var(--radius-sm); background: var(--color-white);
+      color: var(--color-text); outline: none; width: 100%;
+    }
+    .d-input:focus { border-color: var(--color-accent-dk); box-shadow: 0 0 0 3px var(--color-accent-bg); }
+    .d-input-label { font-size: 11px; font-weight: 500; color: var(--color-text3); margin-bottom: 4px; display: block; }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroInfoBox
+       ════════════════════════════════════════════════════════════ */
+    .d-infobox {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 14px 16px; border-radius: var(--radius-sm);
+      border: 1px solid; min-width: 260px;
+    }
+    .d-infobox-icon  { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .d-infobox-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .d-infobox-body  { font-size: 12px; line-height: 1.5; opacity: .85; }
+
+    .d-info-success { background: var(--color-green-bg);  border-color: var(--color-green-border);  color: var(--color-green); }
+    .d-info-error   { background: var(--color-red-bg);    border-color: var(--color-red-border);    color: var(--color-red); }
+    .d-info-warning { background: var(--color-amber-bg);  border-color: var(--color-amber-border);  color: var(--color-amber); }
+    .d-info-info    { background: var(--color-blue-bg);   border-color: var(--color-blue-border);   color: var(--color-blue); }
+    .d-info-neutral { background: var(--color-bg2);       border-color: var(--color-border2);       color: var(--color-text2); }
+    .d-info-feature { background: var(--color-purple-bg); border-color: var(--color-purple-border); color: var(--color-purple); }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark">yaro/ui</div>
+    <span class="logo-name">sistema de diseño</span>
+  </div>
+  <div class="topbar-chips">
+    <a href="index.html"       class="chip">Tokens</a>
+    <a href="instalacion.html" class="chip">Instalación</a>
+    <a href="atoms.html"       class="chip">Átomos</a>
+    <a href="molecules.html"   class="chip active">Moléculas</a>
+    <a href="organisms.html"   class="chip">Organismos</a>
+    <span class="chip">v1.0.0</span>
+  </div>
+</div>
+
+<div class="shell">
+
+  <!-- SIDENAV -->
+  <nav class="sidenav">
+    <div class="sn-section">
+      <span class="sn-label">Moléculas</span>
+      <div class="sn-item active" data-id="card"      onclick="scrollToSection('card', this)"><div class="sn-dot"></div>YaroCard</div>
+      <div class="sn-item"        data-id="kpi"       onclick="scrollToSection('kpi', this)"><div class="sn-dot"></div>YaroKpi</div>
+      <div class="sn-item"        data-id="stat-bar"  onclick="scrollToSection('stat-bar', this)"><div class="sn-dot"></div>YaroStatBar</div>
+      <div class="sn-item"        data-id="stock-bar" onclick="scrollToSection('stock-bar', this)"><div class="sn-dot"></div>YaroStockBar</div>
+      <div class="sn-item"        data-id="nav-item"  onclick="scrollToSection('nav-item', this)"><div class="sn-dot"></div>YaroNavItem</div>
+      <div class="sn-item"        data-id="form-row"  onclick="scrollToSection('form-row', this)"><div class="sn-dot"></div>YaroFormRow</div>
+      <div class="sn-item"        data-id="info-box"  onclick="scrollToSection('info-box', this)"><div class="sn-dot"></div>YaroInfoBox</div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div style="margin-bottom: 40px; animation: fu .4s cubic-bezier(.22,1,.36,1) both;">
+      <div class="section-title">Moléculas</div>
+      <p class="section-desc">Combinaciones de átomos que forman patrones de UI completos. Cada molécula tiene un propósito específico y puede componer organismos más complejos. Todos importan sus átomos internamente — no necesitas declararlos dos veces.</p>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO CARD
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="card">
+      <div class="comp-header">
+        <div class="comp-title">YaroCard <span class="comp-selector">yaro-card</span></div>
+        <p class="comp-desc">Contenedor de superficie con título opcional y slot para acciones. Base de la mayoría de los paneles del sistema. Controla el padding y la sombra con inputs.</p>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'card-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'card-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="card-demo">
+          <div class="demo-area" style="align-items: flex-start; gap: 16px;">
+
+            <div class="d-card" style="min-width:220px;">
+              <div class="d-card-header">
+                <span class="d-card-title">Ventas del día</span>
+                <span class="d-badge d-badge-green">Activo</span>
+              </div>
+              <div class="d-card-body">
+                <div style="font-size:24px;font-weight:700;font-family:var(--font-mono);">$1.240.000</div>
+                <div style="font-size:11px;color:var(--color-text3);margin-top:4px;">47 transacciones</div>
+              </div>
+              <div class="d-card-footer">
+                <button class="d-btn d-btn-ghost" style="font-size:11px;">Ver detalle →</button>
+              </div>
+            </div>
+
+            <div class="d-card" style="min-width:200px;">
+              <div class="d-card-header">
+                <span class="d-card-title">Sin sombra · padding sm</span>
+              </div>
+              <div class="d-card-body" style="padding-top:8px;">
+                <div style="font-size:13px;color:var(--color-text2);">Contenido de la card con padding reducido.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="comp-panel" id="card-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// Card básica con título</span>
+&lt;<span class="t">yaro-card</span> <span class="p">title</span>=<span class="s">"Ventas del día"</span>&gt;
+  &lt;<span class="t">p</span>&gt;Contenido libre aquí&lt;/<span class="t">p</span>&gt;
+&lt;/<span class="t">yaro-card</span>&gt;
+
+<span class="c">// Con slot de acciones (esquina superior derecha del título)</span>
+&lt;<span class="t">yaro-card</span> <span class="p">title</span>=<span class="s">"Productos"</span>&gt;
+  &lt;<span class="t">p</span>&gt;Lista de productos&lt;/<span class="t">p</span>&gt;
+  &lt;<span class="t">ng-container</span> <span class="p">card-actions</span>&gt;
+    &lt;<span class="t">yaro-badge</span> <span class="p">intent</span>=<span class="s">"green"</span>&gt;Activo&lt;/<span class="t">yaro-badge</span>&gt;
+  &lt;/<span class="t">ng-container</span>&gt;
+&lt;/<span class="t">yaro-card</span>&gt;
+
+<span class="c">// Con footer de acciones (pie de la card)</span>
+&lt;<span class="t">yaro-card</span> <span class="p">title</span>=<span class="s">"Confirmar"</span> <span class="p">padding</span>=<span class="s">"md"</span> <span class="p">shadow</span>=<span class="s">"lg"</span>&gt;
+  &lt;<span class="t">p</span>&gt;¿Deseas eliminar este registro?&lt;/<span class="t">p</span>&gt;
+  &lt;<span class="t">ng-container</span> <span class="p">card-footer</span>&gt;
+    &lt;<span class="t">yaro-button</span> <span class="p">variant</span>=<span class="s">"secondary"</span>&gt;Cancelar&lt;/<span class="t">yaro-button</span>&gt;
+    &lt;<span class="t">yaro-button</span> <span class="p">variant</span>=<span class="s">"primary"</span>&gt;Confirmar&lt;/<span class="t">yaro-button</span>&gt;
+  &lt;/<span class="t">ng-container</span>&gt;
+&lt;/<span class="t">yaro-card</span>&gt;</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs</div>
+        <table class="api-table">
+          <thead><tr><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">title</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Título del encabezado. Si está vacío, no se renderiza el header</td></tr>
+            <tr><td><span class="api-name">padding</span></td><td><span class="api-type">'none' | 'sm' | 'md' | 'lg'</span></td><td><span class="api-default">'md'</span></td><td class="api-desc">Padding interno del cuerpo de la card</td></tr>
+            <tr><td><span class="api-name">shadow</span></td><td><span class="api-type">'none' | 'sm' | 'md' | 'lg'</span></td><td><span class="api-default">'md'</span></td><td class="api-desc">Nivel de sombra de la card</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="api-wrap">
+        <div class="api-title">Slots de contenido</div>
+        <table class="api-table">
+          <thead><tr><th>Slot</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">default</span></td><td class="api-desc">Contenido principal del cuerpo</td></tr>
+            <tr><td><span class="api-name">card-actions</span></td><td class="api-desc">Acciones en el encabezado, junto al título (badges, botones pequeños)</td></tr>
+            <tr><td><span class="api-name">card-footer</span></td><td class="api-desc">Pie de la card con borde superior (botones de confirmación)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO KPI
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="kpi">
+      <div class="comp-header">
+        <div class="comp-title">YaroKpi <span class="comp-selector">yaro-kpi</span></div>
+        <p class="comp-desc">Tarjeta de indicador clave de desempeño. Combina internamente <code>YaroDelta</code> y <code>YaroBadge</code>. Ideal para dashboards y resúmenes de métricas.</p>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'kpi-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'kpi-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="kpi-demo">
+          <div class="demo-area" style="align-items: flex-start; gap: 16px; flex-wrap: wrap;">
+
+            <div class="d-kpi">
+              <span class="d-kpi-label">Ventas del día</span>
+              <span class="d-kpi-value">$1.24M</span>
+              <div class="d-kpi-meta">
+                <span class="d-delta d-delta-up">↑ +8.3%</span>
+                <span class="d-kpi-compare">vs ayer</span>
+              </div>
+              <div style="margin-top:6px;"><span class="d-badge d-badge-green">Meta ✓</span></div>
+            </div>
+
+            <div class="d-kpi">
+              <span class="d-kpi-label">Devoluciones</span>
+              <span class="d-kpi-value">12</span>
+              <div class="d-kpi-meta">
+                <span class="d-delta d-delta-up" style="color:var(--color-red);">↑ +3</span>
+                <span class="d-kpi-compare">vs semana pasada</span>
+              </div>
+              <div style="margin-top:6px;"><span class="d-badge d-badge-amber">Revisar</span></div>
+            </div>
+
+            <div class="d-kpi">
+              <span class="d-kpi-label">Mesas ocupadas</span>
+              <span class="d-kpi-value">13/20</span>
+              <div class="d-kpi-meta">
+                <span class="d-kpi-compare">65% ocupación</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="comp-panel" id="kpi-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// KPI básico</span>
+&lt;<span class="t">yaro-kpi</span>
+  <span class="p">label</span>=<span class="s">"Ventas del día"</span>
+  <span class="p">value</span>=<span class="s">"$1.240.000"</span>
+/&gt;
+
+<span class="c">// Con delta y comparación</span>
+&lt;<span class="t">yaro-kpi</span>
+  <span class="p">label</span>=<span class="s">"Ventas del día"</span>
+  <span class="p">value</span>=<span class="s">"$1.240.000"</span>
+  [<span class="p">delta</span>]=<span class="s">"8.3"</span>
+  <span class="p">compareLabel</span>=<span class="s">"vs ayer"</span>
+/&gt;
+
+<span class="c">// Con badge de estado</span>
+&lt;<span class="t">yaro-kpi</span>
+  <span class="p">label</span>=<span class="s">"Ventas del día"</span>
+  <span class="p">value</span>=<span class="s">"$1.240.000"</span>
+  [<span class="p">delta</span>]=<span class="s">"8.3"</span>
+  <span class="p">compareLabel</span>=<span class="s">"vs ayer"</span>
+  <span class="p">badge</span>=<span class="s">"Meta ✓"</span>
+  <span class="p">badgeIntent</span>=<span class="s">"green"</span>
+/&gt;
+
+<span class="c">// Delta invertido (más = peor, ej: devoluciones)</span>
+&lt;<span class="t">yaro-kpi</span>
+  <span class="p">label</span>=<span class="s">"Devoluciones"</span>
+  <span class="p">value</span>=<span class="s">"12"</span>
+  [<span class="p">delta</span>]=<span class="s">"3"</span>
+  [<span class="p">deltaInverted</span>]=<span class="s">"true"</span>
+  <span class="p">compareLabel</span>=<span class="s">"vs semana pasada"</span>
+  <span class="p">badge</span>=<span class="s">"Revisar"</span>
+  <span class="p">badgeIntent</span>=<span class="s">"amber"</span>
+/&gt;</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs</div>
+        <table class="api-table">
+          <thead><tr><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">label</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Nombre del indicador (encima del valor)</td></tr>
+            <tr><td><span class="api-name">value</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Valor principal del KPI (ya formateado)</td></tr>
+            <tr><td><span class="api-name">delta</span></td><td><span class="api-type">number</span></td><td><span class="api-default">undefined</span></td><td class="api-desc">Variación numérica. Si no se pasa, no se muestra el delta</td></tr>
+            <tr><td><span class="api-name">deltaInverted</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">false</span></td><td class="api-desc">Invierte colores del delta (para métricas donde menos es mejor)</td></tr>
+            <tr><td><span class="api-name">compareLabel</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Texto de comparación junto al delta (ej: "vs ayer")</td></tr>
+            <tr><td><span class="api-name">badge</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Texto del badge de estado. Si está vacío, no se muestra</td></tr>
+            <tr><td><span class="api-name">badgeIntent</span></td><td><span class="api-type">string</span></td><td><span class="api-default">'accent'</span></td><td class="api-desc">Intent del badge (mismos valores que YaroBadge)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO STAT BAR
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="stat-bar">
+      <div class="comp-header">
+        <div class="comp-title">YaroStatBar <span class="comp-selector">yaro-stat-bar</span></div>
+        <p class="comp-desc">Barra de progreso con etiqueta y porcentaje. Ideal para mostrar ocupación, avance de metas o uso de recursos. El color se controla con <code>intent</code>.</p>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'statbar-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'statbar-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="statbar-demo">
+          <div class="demo-area" style="flex-direction:column; align-items:stretch; gap:16px; max-width:380px;">
+            <div class="d-statbar">
+              <div class="d-statbar-header">
+                <span class="d-statbar-label">Ocupación de mesas</span>
+                <span class="d-statbar-pct d-pct-green">65%</span>
+              </div>
+              <div class="d-statbar-track"><div class="d-statbar-fill d-bar-green" style="width:65%"></div></div>
+            </div>
+            <div class="d-statbar">
+              <div class="d-statbar-header">
+                <span class="d-statbar-label">Meta de ventas</span>
+                <span class="d-statbar-pct d-pct-accent">82%</span>
+              </div>
+              <div class="d-statbar-track"><div class="d-statbar-fill d-bar-accent" style="width:82%"></div></div>
+            </div>
+            <div class="d-statbar">
+              <div class="d-statbar-header">
+                <span class="d-statbar-label">Capacidad de bodega</span>
+                <span class="d-statbar-pct d-pct-amber">91%</span>
+              </div>
+              <div class="d-statbar-track"><div class="d-statbar-fill d-bar-amber" style="width:91%"></div></div>
+            </div>
+            <div class="d-statbar">
+              <div class="d-statbar-header">
+                <span class="d-statbar-label">Errores del día</span>
+                <span class="d-statbar-pct d-pct-red">34%</span>
+              </div>
+              <div class="d-statbar-track"><div class="d-statbar-fill d-bar-red" style="width:34%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="comp-panel" id="statbar-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// Básico</span>
+&lt;<span class="t">yaro-stat-bar</span>
+  <span class="p">label</span>=<span class="s">"Ocupación de mesas"</span>
+  [<span class="p">value</span>]=<span class="s">"mesasOcupadas"</span>
+  [<span class="p">max</span>]=<span class="s">"totalMesas"</span>
+  <span class="p">intent</span>=<span class="s">"green"</span>
+/&gt;
+
+<span class="c">// Sin porcentaje visible</span>
+&lt;<span class="t">yaro-stat-bar</span>
+  <span class="p">label</span>=<span class="s">"Meta de ventas"</span>
+  [<span class="p">value</span>]=<span class="s">"ventasHoy"</span>
+  [<span class="p">max</span>]=<span class="s">"metaDiaria"</span>
+  <span class="p">intent</span>=<span class="s">"accent"</span>
+  [<span class="p">showPercent</span>]=<span class="s">"false"</span>
+/&gt;
+
+<span class="c">// Color dinámico según el valor</span>
+&lt;<span class="t">yaro-stat-bar</span>
+  <span class="p">label</span>=<span class="s">"Capacidad"</span>
+  [<span class="p">value</span>]=<span class="s">"usado"</span>
+  [<span class="p">max</span>]=<span class="s">"100"</span>
+  [<span class="p">intent</span>]=<span class="s">"usado > 90 ? 'red' : usado > 70 ? 'amber' : 'green'"</span>
+/&gt;</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs</div>
+        <table class="api-table">
+          <thead><tr><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">label</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Etiqueta encima de la barra</td></tr>
+            <tr><td><span class="api-name">value</span></td><td><span class="api-type">number</span></td><td><span class="api-default">0</span></td><td class="api-desc">Valor actual (acepta signal)</td></tr>
+            <tr><td><span class="api-name">max</span></td><td><span class="api-type">number</span></td><td><span class="api-default">100</span></td><td class="api-desc">Valor máximo para calcular el porcentaje</td></tr>
+            <tr><td><span class="api-name">intent</span></td><td><span class="api-type">'green' | 'amber' | 'red' | 'blue' | 'accent'</span></td><td><span class="api-default">'accent'</span></td><td class="api-desc">Color de la barra de relleno</td></tr>
+            <tr><td><span class="api-name">showPercent</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">true</span></td><td class="api-desc">Muestra el porcentaje calculado junto al label</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO STOCK BAR
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="stock-bar">
+      <div class="comp-header">
+        <div class="comp-title">YaroStockBar <span class="comp-selector">yaro-stock-bar</span></div>
+        <p class="comp-desc">Indicador de nivel de inventario. Calcula automáticamente el nivel (<code>ok</code> / <code>low</code> / <code>critical</code>) y cambia de color sin configuración adicional. Los umbrales son ajustables.</p>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'stockbar-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'stockbar-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="stockbar-demo">
+          <div class="demo-area" style="flex-direction:column; align-items:stretch; gap:16px; max-width:340px;">
+            <div class="d-stockbar">
+              <div class="d-stockbar-header">
+                <span class="d-stockbar-label">Arroz Diana 500g</span>
+                <span class="d-stockbar-amount" style="color:var(--color-green);">80 / 100</span>
+              </div>
+              <div class="d-stockbar-track"><div class="d-stockbar-fill d-bar-green" style="width:80%"></div></div>
+              <span class="d-stockbar-status" style="color:var(--color-green);">OK</span>
+            </div>
+            <div class="d-stockbar">
+              <div class="d-stockbar-header">
+                <span class="d-stockbar-label">Aceite Girasol 1L</span>
+                <span class="d-stockbar-amount" style="color:var(--color-amber);">22 / 100</span>
+              </div>
+              <div class="d-stockbar-track"><div class="d-stockbar-fill d-bar-amber" style="width:22%"></div></div>
+              <span class="d-stockbar-status" style="color:var(--color-amber);">Stock bajo</span>
+            </div>
+            <div class="d-stockbar">
+              <div class="d-stockbar-header">
+                <span class="d-stockbar-label">Sal Refisal 500g</span>
+                <span class="d-stockbar-amount" style="color:var(--color-red);">5 / 100</span>
+              </div>
+              <div class="d-stockbar-track"><div class="d-stockbar-fill d-bar-red" style="width:5%"></div></div>
+              <span class="d-stockbar-status" style="color:var(--color-red);">Crítico</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="comp-panel" id="stockbar-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// Básico — nivel automático (ok / low / critical)</span>
+&lt;<span class="t">yaro-stock-bar</span> [<span class="p">current</span>]=<span class="s">"producto.stock"</span> [<span class="p">max</span>]=<span class="s">"producto.stockMax"</span> /&gt;
+
+<span class="c">// Umbrales personalizados</span>
+&lt;<span class="t">yaro-stock-bar</span>
+  [<span class="p">current</span>]=<span class="s">"producto.stock"</span>
+  [<span class="p">max</span>]=<span class="s">"producto.stockMax"</span>
+  [<span class="p">lowThreshold</span>]=<span class="s">"40"</span>
+  [<span class="p">criticalThreshold</span>]=<span class="s">"15"</span>
+/&gt;
+
+<span class="c">// En una tabla de inventario</span>
+<span class="k">@for</span> (item <span class="k">of</span> inventario; <span class="k">track</span> item.id) {
+  &lt;<span class="t">tr</span>&gt;
+    &lt;<span class="t">td</span>&gt;{{ item.nombre }}&lt;/<span class="t">td</span>&gt;
+    &lt;<span class="t">td</span>&gt;&lt;<span class="t">yaro-stock-bar</span> [<span class="p">current</span>]=<span class="s">"item.stock"</span> [<span class="p">max</span>]=<span class="s">"item.max"</span> /&gt;&lt;/<span class="t">td</span>&gt;
+  &lt;/<span class="t">tr</span>&gt;
+}</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs</div>
+        <table class="api-table">
+          <thead><tr><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">current</span></td><td><span class="api-type">number</span></td><td><span class="api-default">0</span></td><td class="api-desc">Cantidad actual en inventario (acepta signal)</td></tr>
+            <tr><td><span class="api-name">max</span></td><td><span class="api-type">number</span></td><td><span class="api-default">100</span></td><td class="api-desc">Cantidad máxima de referencia</td></tr>
+            <tr><td><span class="api-name">lowThreshold</span></td><td><span class="api-type">number</span></td><td><span class="api-default">30</span></td><td class="api-desc">Porcentaje a partir del cual el nivel es "low" (ámbar)</td></tr>
+            <tr><td><span class="api-name">criticalThreshold</span></td><td><span class="api-type">number</span></td><td><span class="api-default">10</span></td><td class="api-desc">Porcentaje a partir del cual el nivel es "critical" (rojo)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO NAV ITEM
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="nav-item">
+      <div class="comp-header">
+        <div class="comp-title">YaroNavItem <span class="comp-selector">yaro-nav-item</span></div>
+        <p class="comp-desc">Elemento de navegación con icono, label y badge opcional. Usado internamente por <code>YaroSidenav</code>, pero también puede usarse de forma independiente en menús personalizados.</p>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'navitem-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'navitem-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="navitem-demo">
+          <div class="demo-area">
+            <div class="d-nav">
+              <div class="d-navitem">
+                <span class="d-navitem-icon">🏠</span>
+                <span class="d-navitem-label">Dashboard</span>
+              </div>
+              <div class="d-navitem active">
+                <span class="d-navitem-icon">💰</span>
+                <span class="d-navitem-label">Ventas</span>
+              </div>
+              <div class="d-navitem">
+                <span class="d-navitem-icon">📦</span>
+                <span class="d-navitem-label">Inventario</span>
+                <span class="d-badge d-badge-red" style="font-size:10px;padding:1px 7px;">3</span>
+              </div>
+              <div class="d-navitem">
+                <span class="d-navitem-icon">👥</span>
+                <span class="d-navitem-label">Clientes</span>
+              </div>
+              <div class="d-navitem" style="opacity:.4;pointer-events:none;">
+                <span class="d-navitem-icon">⚙️</span>
+                <span class="d-navitem-label">Configuración</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="comp-panel" id="navitem-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// Básico</span>
+&lt;<span class="t">yaro-nav-item</span> <span class="p">label</span>=<span class="s">"Dashboard"</span> <span class="p">icon</span>=<span class="s">"🏠"</span> /&gt;
+
+<span class="c">// Activo (seleccionado)</span>
+&lt;<span class="t">yaro-nav-item</span> <span class="p">label</span>=<span class="s">"Ventas"</span> <span class="p">icon</span>=<span class="s">"💰"</span> [<span class="p">active</span>]=<span class="s">"true"</span> /&gt;
+
+<span class="c">// Con badge de notificación</span>
+&lt;<span class="t">yaro-nav-item</span>
+  <span class="p">label</span>=<span class="s">"Inventario"</span>
+  <span class="p">icon</span>=<span class="s">"📦"</span>
+  <span class="p">badge</span>=<span class="s">"3"</span>
+  <span class="p">badgeIntent</span>=<span class="s">"red"</span>
+  (<span class="p">itemClick</span>)=<span class="s">"navigate('inventario')"</span>
+/&gt;
+
+<span class="c">// Dinámico — ruta activa</span>
+<span class="k">@for</span> (item <span class="k">of</span> navItems; <span class="k">track</span> item.id) {
+  &lt;<span class="t">yaro-nav-item</span>
+    [<span class="p">label</span>]=<span class="s">"item.label"</span>
+    [<span class="p">icon</span>]=<span class="s">"item.icon"</span>
+    [<span class="p">active</span>]=<span class="s">"currentRoute === item.id"</span>
+    [<span class="p">badge</span>]=<span class="s">"item.badge"</span>
+    (<span class="p">itemClick</span>)=<span class="s">"navigate(item.id)"</span>
+  /&gt;
+}</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs / @Outputs</div>
+        <table class="api-table">
+          <thead><tr><th></th><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">label</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Texto del item de navegación</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">icon</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Emoji o carácter de icono</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">active</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">false</span></td><td class="api-desc">Aplica el estilo de ítem seleccionado</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">badge</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Texto del badge. Si está vacío, no se renderiza</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">badgeIntent</span></td><td><span class="api-type">string</span></td><td><span class="api-default">'accent'</span></td><td class="api-desc">Intent del badge de notificación</td></tr>
+            <tr><td><span class="badge-out">@Output</span></td><td><span class="api-name">itemClick</span></td><td><span class="api-type">EventEmitter&lt;void&gt;</span></td><td><span class="api-default">—</span></td><td class="api-desc">Emite al hacer clic en el item</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO FORM ROW
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="form-row">
+      <div class="comp-header">
+        <div class="comp-title">YaroFormRow <span class="comp-selector">yaro-form-row</span></div>
+        <p class="comp-desc">Fila de formulario con grid responsivo. Agrupa campos bajo un título de sección con soporte para 1, 2 o 3 columnas. Colapsa a 1 columna automáticamente en pantallas menores a 600px.</p>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'formrow-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'formrow-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="formrow-demo">
+          <div class="demo-area" style="flex-direction:column; align-items:stretch; gap:20px;">
+            <div class="d-formrow">
+              <div class="d-formrow-header">
+                <div class="d-formrow-label">Datos del cliente <span class="d-formrow-req">*</span></div>
+                <div class="d-formrow-hint">Información básica de identificación</div>
+              </div>
+              <div class="d-formrow-grid d-formrow-cols-2">
+                <div><label class="d-input-label">Nombre</label><input class="d-input" placeholder="Ana"></div>
+                <div><label class="d-input-label">Apellido</label><input class="d-input" placeholder="López"></div>
+              </div>
+            </div>
+            <div class="d-formrow">
+              <div class="d-formrow-header">
+                <div class="d-formrow-label">Dirección de entrega</div>
+              </div>
+              <div class="d-formrow-grid d-formrow-cols-3">
+                <div><label class="d-input-label">Ciudad</label><input class="d-input" placeholder="Bogotá"></div>
+                <div><label class="d-input-label">Barrio</label><input class="d-input" placeholder="Chapinero"></div>
+                <div><label class="d-input-label">Código postal</label><input class="d-input" placeholder="110111"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="comp-panel" id="formrow-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// 2 columnas con título requerido</span>
+&lt;<span class="t">yaro-form-row</span>
+  <span class="p">label</span>=<span class="s">"Datos del cliente"</span>
+  <span class="p">hint</span>=<span class="s">"Información básica de identificación"</span>
+  [<span class="p">cols</span>]=<span class="s">"2"</span>
+  [<span class="p">required</span>]=<span class="s">"true"</span>
+&gt;
+  &lt;<span class="t">yaro-input</span> <span class="p">label</span>=<span class="s">"Nombre"</span>   [(<span class="p">ngModel</span>)]=<span class="s">"nombre"</span>   /&gt;
+  &lt;<span class="t">yaro-input</span> <span class="p">label</span>=<span class="s">"Apellido"</span> [(<span class="p">ngModel</span>)]=<span class="s">"apellido"</span> /&gt;
+&lt;/<span class="t">yaro-form-row</span>&gt;
+
+<span class="c">// 3 columnas</span>
+&lt;<span class="t">yaro-form-row</span> <span class="p">label</span>=<span class="s">"Dirección"</span> [<span class="p">cols</span>]=<span class="s">"3"</span>&gt;
+  &lt;<span class="t">yaro-input</span> <span class="p">label</span>=<span class="s">"Ciudad"</span>        [(<span class="p">ngModel</span>)]=<span class="s">"ciudad"</span>   /&gt;
+  &lt;<span class="t">yaro-input</span> <span class="p">label</span>=<span class="s">"Barrio"</span>         [(<span class="p">ngModel</span>)]=<span class="s">"barrio"</span>   /&gt;
+  &lt;<span class="t">yaro-input</span> <span class="p">label</span>=<span class="s">"Código postal"</span>  [(<span class="p">ngModel</span>)]=<span class="s">"codPostal"</span> /&gt;
+&lt;/<span class="t">yaro-form-row</span>&gt;</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs</div>
+        <table class="api-table">
+          <thead><tr><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">label</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Título de la sección del formulario</td></tr>
+            <tr><td><span class="api-name">hint</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Texto de ayuda debajo del título</td></tr>
+            <tr><td><span class="api-name">cols</span></td><td><span class="api-type">1 | 2 | 3</span></td><td><span class="api-default">1</span></td><td class="api-desc">Número de columnas del grid. Colapsa a 1 col bajo 600px</td></tr>
+            <tr><td><span class="api-name">required</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">false</span></td><td class="api-desc">Muestra asterisco rojo junto al título</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO INFO BOX
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="info-box">
+      <div class="comp-header">
+        <div class="comp-title">YaroInfoBox <span class="comp-selector">yaro-info-box</span></div>
+        <p class="comp-desc">Caja de mensaje contextual con icono y título. 6 intenciones semánticas. El icono se asigna automáticamente según la intención si no se pasa uno personalizado.</p>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'infobox-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'infobox-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="infobox-demo">
+          <div class="demo-area" style="flex-direction:column; align-items:stretch; gap:10px; max-width:480px;">
+            <div class="d-infobox d-info-success">
+              <span class="d-infobox-icon">✓</span>
+              <div><div class="d-infobox-title">Transmisión exitosa</div><div class="d-infobox-body">La factura fue enviada a la DIAN y fue aceptada.</div></div>
+            </div>
+            <div class="d-infobox d-info-error">
+              <span class="d-infobox-icon">✕</span>
+              <div><div class="d-infobox-title">Error de conexión</div><div class="d-infobox-body">No se pudo conectar con el servidor DIAN. Intenta de nuevo.</div></div>
+            </div>
+            <div class="d-infobox d-info-warning">
+              <span class="d-infobox-icon">⚠</span>
+              <div><div class="d-infobox-title">Stock bajo</div><div class="d-infobox-body">3 productos tienen menos del 10% de inventario.</div></div>
+            </div>
+            <div class="d-infobox d-info-info">
+              <span class="d-infobox-icon">ℹ</span>
+              <div><div class="d-infobox-title">Traslado en camino</div><div class="d-infobox-body">El pedido salió de bodega y llegará en 2 horas.</div></div>
+            </div>
+            <div class="d-infobox d-info-feature">
+              <span class="d-infobox-icon">◈</span>
+              <div><div class="d-infobox-title">Clasificación IA</div><div class="d-infobox-body">Este lote fue clasificado automáticamente por el modelo CDP.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="comp-panel" id="infobox-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// Icono automático según intent</span>
+&lt;<span class="t">yaro-info-box</span> <span class="p">intent</span>=<span class="s">"success"</span> <span class="p">title</span>=<span class="s">"Transmisión exitosa"</span>&gt;
+  La factura fue enviada a la DIAN y fue aceptada.
+&lt;/<span class="t">yaro-info-box</span>&gt;
+
+&lt;<span class="t">yaro-info-box</span> <span class="p">intent</span>=<span class="s">"error"</span> <span class="p">title</span>=<span class="s">"Error de conexión"</span>&gt;
+  No se pudo conectar con el servidor DIAN.
+&lt;/<span class="t">yaro-info-box</span>&gt;
+
+&lt;<span class="t">yaro-info-box</span> <span class="p">intent</span>=<span class="s">"warning"</span> <span class="p">title</span>=<span class="s">"Stock bajo"</span>&gt;
+  3 productos tienen menos del 10% de inventario.
+&lt;/<span class="t">yaro-info-box</span>&gt;
+
+&lt;<span class="t">yaro-info-box</span> <span class="p">intent</span>=<span class="s">"info"</span> <span class="p">title</span>=<span class="s">"Traslado en camino"</span>&gt;
+  El pedido llegará en 2 horas.
+&lt;/<span class="t">yaro-info-box</span>&gt;
+
+<span class="c">// Icono personalizado</span>
+&lt;<span class="t">yaro-info-box</span> <span class="p">intent</span>=<span class="s">"feature"</span> <span class="p">title</span>=<span class="s">"Clasificación IA"</span> <span class="p">icon</span>=<span class="s">"🤖"</span>&gt;
+  Lote clasificado automáticamente por el modelo CDP.
+&lt;/<span class="t">yaro-info-box</span>&gt;</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs</div>
+        <table class="api-table">
+          <thead><tr><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">intent</span></td><td><span class="api-type">'success' | 'error' | 'warning' | 'info' | 'neutral' | 'feature'</span></td><td><span class="api-default">'info'</span></td><td class="api-desc">Determina color e icono por defecto</td></tr>
+            <tr><td><span class="api-name">title</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Título en negrita del mensaje</td></tr>
+            <tr><td><span class="api-name">icon</span></td><td><span class="api-type">string</span></td><td><span class="api-default">auto</span></td><td class="api-desc">Icono personalizado. Si no se pasa, se usa el del intent: ✓ ✕ ⚠ ℹ ◈ ·</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<div class="toast" id="toast"></div>
+<script src="js/main.js"></script>
+</body>
+</html>

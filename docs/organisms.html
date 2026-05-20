@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@yaro/ui — Organismos</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    /* ════════════════════════════════════════════════════════════
+       Compartidos
+       ════════════════════════════════════════════════════════════ */
+    .d-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: var(--font-sans); font-weight: 500; font-size: 11px;
+      padding: 3px 9px; border-radius: 20px; border: 1px solid;
+    }
+    .d-badge-green   { background: var(--color-green-bg);   color: var(--color-green);   border-color: var(--color-green-border); }
+    .d-badge-red     { background: var(--color-red-bg);     color: var(--color-red);     border-color: var(--color-red-border); }
+    .d-badge-amber   { background: var(--color-amber-bg);   color: var(--color-amber);   border-color: var(--color-amber-border); }
+    .d-badge-neutral { background: var(--color-bg2);        color: var(--color-text2);   border-color: var(--color-border2); }
+    .d-badge-accent  { background: var(--color-accent-bg);  color: var(--color-accent-txt); border-color: var(--color-accent-border); }
+
+    .d-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--font-sans); font-size: 13px; font-weight: 500;
+      padding: 8px 16px; border-radius: var(--radius-sm); border: none; cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .d-btn-sm { font-size: 11px; padding: 5px 12px; }
+    .d-btn-primary   { background: var(--color-accent); color: var(--color-accent-txt); }
+    .d-btn-secondary { background: transparent; color: var(--color-text); border: 1px solid var(--color-border2); }
+    .d-btn-ghost     { background: transparent; color: var(--color-text2); }
+
+    .d-delta-up   { color: var(--color-green); font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
+    .d-delta-down { color: var(--color-red);   font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroModal
+       ════════════════════════════════════════════════════════════ */
+    .d-modal-backdrop {
+      background: rgba(0,0,0,.35); border-radius: var(--radius);
+      padding: 32px; display: flex; align-items: center; justify-content: center;
+      min-height: 260px;
+    }
+    .d-modal {
+      background: var(--color-white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      width: 100%; max-width: 400px;
+      animation: fu .3s cubic-bezier(.22,1,.36,1) both;
+    }
+    .d-modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .d-modal-title { font-size: 15px; font-weight: 700; }
+    .d-modal-close {
+      width: 28px; height: 28px; border-radius: var(--radius-xs);
+      background: transparent; border: none; cursor: pointer;
+      color: var(--color-text3); font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition-fast);
+    }
+    .d-modal-close:hover { background: var(--color-bg2); color: var(--color-text); }
+    .d-modal-body    { padding: 18px 22px; font-size: 13px; color: var(--color-text2); line-height: 1.6; }
+    .d-modal-footer  {
+      padding: 12px 22px 18px;
+      display: flex; justify-content: flex-end; gap: 8px;
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroDataTable
+       ════════════════════════════════════════════════════════════ */
+    .d-table-wrap {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      width: 100%;
+    }
+    .d-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 13px;
+    }
+    .d-table thead tr { background: var(--color-bg2); }
+    .d-table th {
+      padding: 10px 14px; text-align: left;
+      font-size: 11px; font-weight: 600;
+      color: var(--color-text3); text-transform: uppercase;
+      letter-spacing: .06em;
+      border-bottom: 1px solid var(--color-border2);
+      white-space: nowrap;
+    }
+    .d-table th.sortable { cursor: pointer; user-select: none; }
+    .d-table th.sortable:hover { color: var(--color-text2); }
+    .d-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--color-border);
+      color: var(--color-text);
+    }
+    .d-table tbody tr:last-child td { border-bottom: none; }
+    .d-table tbody tr:hover td { background: var(--color-surface); cursor: pointer; }
+    .d-table-loading td { padding: 32px; text-align: center; color: var(--color-text3); }
+    .d-skeleton {
+      height: 12px; border-radius: 4px;
+      background: linear-gradient(90deg, var(--color-bg2) 25%, var(--color-surface) 50%, var(--color-bg2) 75%);
+      background-size: 200% 100%;
+      animation: skeleton 1.4s ease infinite;
+    }
+    @keyframes skeleton { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    .d-table-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px;
+      border-top: 1px solid var(--color-border);
+      background: var(--color-surface);
+    }
+    .d-page-info { font-size: 11px; color: var(--color-text3); font-variant-numeric: tabular-nums; }
+    .d-page-btns { display: flex; align-items: center; gap: 6px; }
+    .d-page-current { font-size: 11px; color: var(--color-text2); min-width: 44px; text-align: center; }
+    .d-page-btn {
+      width: 28px; height: 28px; border-radius: var(--radius-xs);
+      border: 1px solid var(--color-border2);
+      background: var(--color-white); color: var(--color-text2);
+      font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition-fast);
+    }
+    .d-page-btn:hover:not(:disabled) { background: var(--color-bg2); color: var(--color-text); }
+    .d-page-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroSidenav
+       ════════════════════════════════════════════════════════════ */
+    .d-sidenav-demo { display: flex; gap: 0; border: 1px solid var(--color-border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); min-height: 300px; }
+    .d-sidenav {
+      background: var(--color-surface);
+      border-right: 1px solid var(--color-border);
+      padding: 16px 0;
+      transition: width var(--transition-spring);
+      overflow: hidden;
+    }
+    .d-sidenav.expanded { width: 200px; }
+    .d-sidenav.collapsed { width: 52px; }
+    .d-sidenav-brand {
+      padding: 0 10px 12px;
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: 8px;
+      display: flex; align-items: center; gap: 8px;
+      overflow: hidden; white-space: nowrap;
+    }
+    .d-sidenav-logo {
+      width: 30px; height: 30px; border-radius: var(--radius-xs);
+      background: var(--color-accent); color: var(--color-accent-txt);
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .d-sidenav-brand-name { font-size: 13px; font-weight: 600; color: var(--color-text); }
+    .d-sn-label {
+      font-size: 9px; font-weight: 600; color: var(--color-text3);
+      text-transform: uppercase; letter-spacing: .12em;
+      padding: 0 14px; margin: 10px 0 4px; display: block;
+      overflow: hidden; white-space: nowrap;
+    }
+    .d-sn-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 10px; margin: 0 6px;
+      border-radius: var(--radius-sm);
+      font-size: 13px; color: var(--color-text2);
+      cursor: pointer; border: 1px solid transparent;
+      transition: all var(--transition-fast); overflow: hidden; white-space: nowrap;
+    }
+    .d-sn-item:hover { background: var(--color-bg2); color: var(--color-text); }
+    .d-sn-item.active { background: var(--color-accent-bg); color: var(--color-accent-txt); border-color: var(--color-accent-border); font-weight: 500; }
+    .d-sn-icon { font-size: 15px; flex-shrink: 0; }
+    .d-sidenav-content { flex: 1; padding: 20px; background: var(--color-bg); }
+    .d-sidenav-toggle {
+      display: flex; align-items: center; justify-content: center;
+      padding: 8px; margin: 4px 6px 0;
+      border-radius: var(--radius-sm); cursor: pointer;
+      color: var(--color-text3); font-size: 13px;
+      transition: all var(--transition-fast);
+    }
+    .d-sidenav-toggle:hover { background: var(--color-bg2); color: var(--color-text2); }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroTopbar
+       ════════════════════════════════════════════════════════════ */
+    .d-topbar {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: 0 20px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%;
+    }
+    .d-topbar-brand { display: flex; align-items: center; gap: 10px; }
+    .d-topbar-logo {
+      width: 28px; height: 28px; border-radius: var(--radius-xs);
+      background: var(--color-accent); color: var(--color-accent-txt);
+      font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+    }
+    .d-topbar-titles { display: flex; flex-direction: column; }
+    .d-topbar-title    { font-size: 15px; font-weight: 700; line-height: 1.1; }
+    .d-topbar-subtitle { font-size: 11px; color: var(--color-text3); }
+    .d-topbar-actions  { display: flex; align-items: center; gap: 10px; }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroBienestarPicker
+       ════════════════════════════════════════════════════════════ */
+    .d-bienestar { display: flex; gap: 8px; flex-wrap: wrap; }
+    .d-bopt {
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      padding: 12px 14px; border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border2);
+      cursor: pointer; transition: all var(--transition-fast);
+      background: var(--color-white); min-width: 68px;
+    }
+    .d-bopt:hover  { border-color: var(--color-accent-border); background: var(--color-accent-bg); }
+    .d-bopt.sel    { border-color: var(--color-accent-border); background: var(--color-accent-bg); box-shadow: 0 0 0 2px var(--color-accent-dk); }
+    .d-bopt-icon   { font-size: 24px; }
+    .d-bopt-label  { font-size: 10px; font-weight: 500; color: var(--color-text2); }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroConnectionBadge
+       ════════════════════════════════════════════════════════════ */
+    .d-conn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 20px;
+      border: 1px solid; font-size: 12px; font-weight: 500;
+      font-family: var(--font-sans);
+    }
+    .d-conn-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .d-conn-online     { background: var(--color-green-bg);  border-color: var(--color-green-border);  color: var(--color-green); }
+    .d-conn-offline    { background: var(--color-bg2);       border-color: var(--color-border2);       color: var(--color-text3); }
+    .d-conn-error      { background: var(--color-red-bg);    border-color: var(--color-red-border);    color: var(--color-red); }
+    .d-conn-connecting { background: var(--color-amber-bg);  border-color: var(--color-amber-border);  color: var(--color-amber); }
+
+    @keyframes conn-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+    @keyframes conn-blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+    .pulse  { animation: conn-pulse 2s ease-in-out infinite; }
+    .blink  { animation: conn-blink 1s step-start infinite; }
+    .blink-fast { animation: conn-blink .7s step-start infinite; }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark">yaro/ui</div>
+    <span class="logo-name">sistema de diseño</span>
+  </div>
+  <div class="topbar-chips">
+    <a href="index.html"       class="chip">Tokens</a>
+    <a href="instalacion.html" class="chip">Instalación</a>
+    <a href="atoms.html"       class="chip">Átomos</a>
+    <a href="molecules.html"   class="chip">Moléculas</a>
+    <a href="organisms.html"   class="chip active">Organismos</a>
+    <span class="chip">v1.0.0</span>
+  </div>
+</div>
+
+<div class="shell">
+
+  <!-- SIDENAV -->
+  <nav class="sidenav">
+    <div class="sn-section">
+      <span class="sn-label">Organismos</span>
+      <div class="sn-item active" data-id="modal"            onclick="scrollToSection('modal', this)"><div class="sn-dot"></div>YaroModal</div>
+      <div class="sn-item"        data-id="data-table"       onclick="scrollToSection('data-table', this)"><div class="sn-dot"></div>YaroDataTable</div>
+      <div class="sn-item"        data-id="sidenav-comp"     onclick="scrollToSection('sidenav-comp', this)"><div class="sn-dot"></div>YaroSidenav</div>
+      <div class="sn-item"        data-id="topbar-comp"      onclick="scrollToSection('topbar-comp', this)"><div class="sn-dot"></div>YaroTopbar</div>
+      <div class="sn-item"        data-id="bienestar"        onclick="scrollToSection('bienestar', this)"><div class="sn-dot"></div>YaroBienestarPicker</div>
+      <div class="sn-item"        data-id="connection-badge" onclick="scrollToSection('connection-badge', this)"><div class="sn-dot"></div>YaroConnectionBadge</div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div style="margin-bottom: 40px; animation: fu .4s cubic-bezier(.22,1,.36,1) both;">
+      <div class="section-title">Organismos</div>
+      <p class="section-desc">Componentes completos y autocontenidos que representan secciones enteras de la interfaz. Combinan átomos y moléculas internamente. Gestionan su propio estado y exponen una API limpia hacia el exterior.</p>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO MODAL
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="modal">
+      <div class="comp-header">
+        <div class="comp-title">YaroModal <span class="comp-selector">yaro-modal</span></div>
+        <p class="comp-desc">Diálogo modal con overlay. Se renderiza con <code>@if (open)</code> — cuando <code>open</code> es false no existe en el DOM. Cierra con clic en el backdrop, botón ✕ y tecla <kbd>Escape</kbd>.</p>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'modal-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'modal-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="modal-demo">
+          <div class="demo-area" style="flex-direction:column; padding:0;">
+            <div class="d-modal-backdrop">
+              <div class="d-modal">
+                <div class="d-modal-header">
+                  <span class="d-modal-title">Confirmar eliminación</span>
+                  <button class="d-modal-close">✕</button>
+                </div>
+                <div class="d-modal-body">
+                  ¿Estás segura de que deseas eliminar este producto? Esta acción no se puede deshacer.
+                </div>
+                <div class="d-modal-footer">
+                  <button class="d-btn d-btn-secondary">Cancelar</button>
+                  <button class="d-btn d-btn-primary" style="background:var(--color-red);color:#fff;">Eliminar</button>
+                </div>
+              </div>
+            </div>
+            <div style="padding:12px 20px; background:var(--color-surface); border-top:1px solid var(--color-border); font-size:11px; color:var(--color-text3); display:flex; gap:16px;">
+              <span>size: <code style="font-family:var(--font-mono);">sm</code></span>
+              <span>closable: <code style="font-family:var(--font-mono);">true</code></span>
+              <span>closeOnBackdrop: <code style="font-family:var(--font-mono);">true</code></span>
+              <span>ESC: <code style="font-family:var(--font-mono);">true</code></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="comp-panel" id="modal-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// En el template</span>
+&lt;<span class="t">yaro-modal</span>
+  [<span class="p">open</span>]=<span class="s">"showModal"</span>
+  <span class="p">title</span>=<span class="s">"Confirmar eliminación"</span>
+  <span class="p">size</span>=<span class="s">"sm"</span>
+  (<span class="p">closed</span>)=<span class="s">"showModal = false"</span>
+&gt;
+  &lt;<span class="t">p</span>&gt;¿Estás segura? Esta acción no se puede deshacer.&lt;/<span class="t">p</span>&gt;
+
+  &lt;<span class="t">ng-container</span> <span class="p">modal-actions</span>&gt;
+    &lt;<span class="t">yaro-button</span> <span class="p">variant</span>=<span class="s">"secondary"</span> (<span class="p">click</span>)=<span class="s">"showModal = false"</span>&gt;Cancelar&lt;/<span class="t">yaro-button</span>&gt;
+    &lt;<span class="t">yaro-button</span> <span class="p">variant</span>=<span class="s">"primary"</span>   (<span class="p">click</span>)=<span class="s">"confirmar()"</span>&gt;Eliminar&lt;/<span class="t">yaro-button</span>&gt;
+  &lt;/<span class="t">ng-container</span>&gt;
+&lt;/<span class="t">yaro-modal</span>&gt;
+
+<span class="c">// En el componente</span>
+<span class="k">export class</span> <span class="t">MiComponent</span> {
+  showModal = <span class="v">false</span>;
+
+  confirmar() {
+    <span class="c">// lógica de confirmación</span>
+    this.showModal = <span class="v">false</span>;
+  }
+}
+
+<span class="c">// Modal de pantalla completa</span>
+&lt;<span class="t">yaro-modal</span> [<span class="p">open</span>]=<span class="s">"open"</span> <span class="p">title</span>=<span class="s">"Editor"</span> <span class="p">size</span>=<span class="s">"full"</span> (<span class="p">closed</span>)=<span class="s">"open=false"</span>&gt;
+  &lt;<span class="t">app-editor</span> /&gt;
+&lt;/<span class="t">yaro-modal</span>&gt;</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs / @Outputs</div>
+        <table class="api-table">
+          <thead><tr><th></th><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">open</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">false</span></td><td class="api-desc">Controla la visibilidad. Con <code>false</code> el modal no existe en el DOM</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">title</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Título del modal en el encabezado</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">size</span></td><td><span class="api-type">'sm' | 'md' | 'lg' | 'full'</span></td><td><span class="api-default">'md'</span></td><td class="api-desc">Ancho del diálogo: sm=400px · md=560px · lg=800px · full=100vw</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">closable</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">true</span></td><td class="api-desc">Muestra el botón ✕ en el encabezado</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">closeOnBackdrop</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">true</span></td><td class="api-desc">Cierra al hacer clic en el overlay oscuro</td></tr>
+            <tr><td><span class="badge-out">@Output</span></td><td><span class="api-name">closed</span></td><td><span class="api-type">EventEmitter&lt;void&gt;</span></td><td><span class="api-default">—</span></td><td class="api-desc">Emite al cerrar por cualquier método (✕, backdrop o ESC)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="api-wrap">
+        <div class="api-title">Slots de contenido</div>
+        <table class="api-table">
+          <thead><tr><th>Slot</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">default</span></td><td class="api-desc">Cuerpo del modal</td></tr>
+            <tr><td><span class="api-name">modal-actions</span></td><td class="api-desc">Botones en el pie (alineados a la derecha)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO DATA TABLE
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="data-table">
+      <div class="comp-header">
+        <div class="comp-title">YaroDataTable <span class="comp-selector">yaro-data-table</span></div>
+        <p class="comp-desc">Tabla de datos con columnas configurables, ordenamiento client-side, paginación y estado de carga con skeleton. Soporta columnas de tipo texto, número, badge y delta. Las filas pueden ser clickeables.</p>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'table-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'table-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="table-demo">
+          <div class="demo-area" style="padding:20px; flex-direction:column; gap:16px;">
+
+            <!-- Tabla con paginación -->
+            <div style="font-size:11px;color:var(--color-text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Con paginación (pageSize=4)</div>
+            <div class="d-table-wrap">
+              <table class="d-table">
+                <thead>
+                  <tr>
+                    <th>Producto</th>
+                    <th class="sortable">Stock ↕</th>
+                    <th>Variación</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="table-body-paged">
+                  <!-- Página 1 (filas 1-4 de 8) — renderizadas por JS -->
+                </tbody>
+              </table>
+              <div class="d-table-footer">
+                <span class="d-page-info" id="page-info">1–4 de 8</span>
+                <div class="d-page-btns">
+                  <button class="d-page-btn" id="btn-prev" onclick="tablePrev()" disabled>‹</button>
+                  <span class="d-page-current" id="page-current">1 / 2</span>
+                  <button class="d-page-btn" id="btn-next" onclick="tableNext()">›</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Skeleton -->
+            <div style="font-size:11px;color:var(--color-text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Estado loading (skeleton)</div>
+            <div class="d-table-wrap">
+              <table class="d-table">
+                <thead><tr><th>Producto</th><th>Stock</th><th>Estado</th></tr></thead>
+                <tbody>
+                  <tr><td><div class="d-skeleton" style="width:140px"></div></td><td><div class="d-skeleton" style="width:40px"></div></td><td><div class="d-skeleton" style="width:60px"></div></td></tr>
+                  <tr><td><div class="d-skeleton" style="width:110px"></div></td><td><div class="d-skeleton" style="width:40px"></div></td><td><div class="d-skeleton" style="width:60px"></div></td></tr>
+                  <tr><td><div class="d-skeleton" style="width:130px"></div></td><td><div class="d-skeleton" style="width:40px"></div></td><td><div class="d-skeleton" style="width:60px"></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="comp-panel" id="table-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// Definición de columnas</span>
+<span class="k">import</span> { TableColumn } <span class="k">from</span> <span class="s">'@yaro/ui'</span>;
+
+columns: <span class="t">TableColumn</span>[] = [
+  { <span class="p">key</span>: <span class="s">'nombre'</span>,    <span class="p">header</span>: <span class="s">'Producto'</span>,  <span class="p">type</span>: <span class="s">'text'</span>  },
+  { <span class="p">key</span>: <span class="s">'stock'</span>,     <span class="p">header</span>: <span class="s">'Stock'</span>,     <span class="p">type</span>: <span class="s">'text'</span>, <span class="p">sortable</span>: <span class="v">true</span>, <span class="p">align</span>: <span class="s">'right'</span> },
+  { <span class="p">key</span>: <span class="s">'variacion'</span>, <span class="p">header</span>: <span class="s">'Variación'</span>, <span class="p">type</span>: <span class="s">'delta'</span> },
+  {
+    <span class="p">key</span>: <span class="s">'estado'</span>, <span class="p">header</span>: <span class="s">'Estado'</span>, <span class="p">type</span>: <span class="s">'badge'</span>,
+    <span class="p">intentFn</span>: row => row[<span class="s">'stock'</span>] &gt; <span class="v">30</span> ? <span class="s">'green'</span> : row[<span class="s">'stock'</span>] &gt; <span class="v">10</span> ? <span class="s">'amber'</span> : <span class="s">'red'</span>
+  },
+];
+
+page     = <span class="v">1</span>;
+pageSize = <span class="v">10</span>;
+
+<span class="c">// En el template</span>
+&lt;<span class="t">yaro-data-table</span>
+  [<span class="p">columns</span>]=<span class="s">"columns"</span>
+  [<span class="p">rows</span>]=<span class="s">"productos"</span>
+  [<span class="p">loading</span>]=<span class="s">"cargando"</span>
+  [<span class="p">pageSize</span>]=<span class="s">"pageSize"</span>
+  [<span class="p">page</span>]=<span class="s">"page"</span>
+  [<span class="p">rowClickable</span>]=<span class="s">"true"</span>
+  (<span class="p">rowClick</span>)=<span class="s">"abrirDetalle($event)"</span>
+  (<span class="p">pageChange</span>)=<span class="s">"page = $event"</span>
+/&gt;
+
+<span class="c">// Sin paginación (por defecto) — muestra todas las filas</span>
+&lt;<span class="t">yaro-data-table</span>
+  [<span class="p">columns</span>]=<span class="s">"columns"</span>
+  [<span class="p">rows</span>]=<span class="s">"productos"</span>
+/&gt;</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs / @Outputs</div>
+        <table class="api-table">
+          <thead><tr><th></th><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">columns</span></td><td><span class="api-type">TableColumn[]</span></td><td><span class="api-default">[]</span></td><td class="api-desc">Definición de columnas (ver interfaz abajo)</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">rows</span></td><td><span class="api-type">Record&lt;string,unknown&gt;[]</span></td><td><span class="api-default">[]</span></td><td class="api-desc">Datos de la tabla. Cada objeto es una fila</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">loading</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">false</span></td><td class="api-desc">Muestra filas skeleton mientras carga</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">pageSize</span></td><td><span class="api-type">number</span></td><td><span class="api-default">0</span></td><td class="api-desc">Filas por página. Con <code>0</code> desactiva la paginación y muestra todo</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">page</span></td><td><span class="api-type">number</span></td><td><span class="api-default">1</span></td><td class="api-desc">Página actual (1-indexed). El padre actualiza con <code>(pageChange)="page = $event"</code></td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">rowClickable</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">false</span></td><td class="api-desc">Habilita hover y cursor pointer en filas</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">skeletonCount</span></td><td><span class="api-type">number</span></td><td><span class="api-default">5</span></td><td class="api-desc">Número de filas skeleton durante la carga</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">emptyMessage</span></td><td><span class="api-type">string</span></td><td><span class="api-default">'Sin datos…'</span></td><td class="api-desc">Texto cuando no hay filas</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">trackByKey</span></td><td><span class="api-type">string | null</span></td><td><span class="api-default">null</span></td><td class="api-desc">Clave del objeto para el <code>trackBy</code> de <code>@for</code>. Con <code>null</code> usa el índice</td></tr>
+            <tr><td><span class="badge-out">@Output</span></td><td><span class="api-name">rowClick</span></td><td><span class="api-type">EventEmitter&lt;Record&gt;</span></td><td><span class="api-default">—</span></td><td class="api-desc">Emite el objeto de la fila al hacer clic</td></tr>
+            <tr><td><span class="badge-out">@Output</span></td><td><span class="api-name">pageChange</span></td><td><span class="api-type">EventEmitter&lt;number&gt;</span></td><td><span class="api-default">—</span></td><td class="api-desc">Emite el número de la nueva página al navegar</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="api-wrap">
+        <div class="api-title">Interfaz TableColumn</div>
+        <table class="api-table">
+          <thead><tr><th>Propiedad</th><th>Tipo</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">key</span></td><td><span class="api-type">string</span></td><td class="api-desc">Clave del objeto de datos a mostrar</td></tr>
+            <tr><td><span class="api-name">header</span></td><td><span class="api-type">string</span></td><td class="api-desc">Texto del encabezado de la columna</td></tr>
+            <tr><td><span class="api-name">type</span></td><td><span class="api-type">'text' | 'number' | 'badge' | 'delta'</span></td><td class="api-desc">Renderizado de la celda</td></tr>
+            <tr><td><span class="api-name">sortable</span></td><td><span class="api-type">boolean</span></td><td class="api-desc">Habilita ordenamiento client-side por esta columna</td></tr>
+            <tr><td><span class="api-name">align</span></td><td><span class="api-type">'left' | 'right' | 'center'</span></td><td class="api-desc">Alineación del contenido de la columna</td></tr>
+            <tr><td><span class="api-name">width</span></td><td><span class="api-type">string</span></td><td class="api-desc">Ancho CSS de la columna (ej: <code>'120px'</code>, <code>'20%'</code>)</td></tr>
+            <tr><td><span class="api-name">intentFn</span></td><td><span class="api-type">(row) => string</span></td><td class="api-desc">Función que recibe la fila y retorna el intent del badge</td></tr>
+            <tr><td><span class="api-name">inverted</span></td><td><span class="api-type">boolean</span></td><td class="api-desc">Para columnas delta: invierte los colores (negativo = bueno)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO SIDENAV
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="sidenav-comp">
+      <div class="comp-header">
+        <div class="comp-title">YaroSidenav <span class="comp-selector">yaro-sidenav</span></div>
+        <p class="comp-desc">Barra de navegación lateral con secciones agrupadas. En desktop puede colapsar a modo icono (56px). En móvil (&lt;768px) se convierte automáticamente en un drawer deslizante con overlay — el desarrollador solo controla <code>mobileOpen</code>.</p>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'sidenav-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'sidenav-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="sidenav-demo">
+          <div class="demo-area" style="padding:20px; gap:20px; align-items:flex-start;">
+
+            <div class="d-sidenav-demo" style="width:100%;">
+              <div class="d-sidenav expanded" id="demo-sidenav">
+                <div class="d-sidenav-brand">
+                  <div class="d-sidenav-logo">y</div>
+                  <span class="d-sidenav-brand-name">YARO</span>
+                </div>
+                <span class="d-sn-label">Principal</span>
+                <div class="d-sn-item active"><span class="d-sn-icon">🏠</span><span>Dashboard</span></div>
+                <div class="d-sn-item"><span class="d-sn-icon">💰</span><span>Ventas</span><span class="d-badge d-badge-accent" style="margin-left:auto;font-size:10px;padding:1px 6px;">12</span></div>
+                <div class="d-sn-item"><span class="d-sn-icon">📦</span><span>Inventario</span></div>
+                <span class="d-sn-label">Configuración</span>
+                <div class="d-sn-item"><span class="d-sn-icon">👥</span><span>Usuarios</span></div>
+                <div class="d-sn-item"><span class="d-sn-icon">⚙️</span><span>Ajustes</span></div>
+                <div class="d-sidenav-toggle" onclick="toggleSidenav()">← Colapsar</div>
+              </div>
+              <div class="d-sidenav-content">
+                <div style="font-size:13px;color:var(--color-text3);">Contenido de la pantalla</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="comp-panel" id="sidenav-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="k">import</span> { SidenavSection } <span class="k">from</span> <span class="s">'@yaro/ui'</span>;
+
+sections: <span class="t">SidenavSection</span>[] = [
+  {
+    <span class="p">label</span>: <span class="s">'Principal'</span>,
+    <span class="p">items</span>: [
+      { <span class="p">id</span>: <span class="s">'dashboard'</span>,  <span class="p">label</span>: <span class="s">'Dashboard'</span>,  <span class="p">icon</span>: <span class="s">'🏠'</span> },
+      { <span class="p">id</span>: <span class="s">'ventas'</span>,     <span class="p">label</span>: <span class="s">'Ventas'</span>,     <span class="p">icon</span>: <span class="s">'💰'</span>, <span class="p">badge</span>: <span class="s">'12'</span> },
+      { <span class="p">id</span>: <span class="s">'inventario'</span>, <span class="p">label</span>: <span class="s">'Inventario'</span>, <span class="p">icon</span>: <span class="s">'📦'</span> },
+    ],
+  },
+];
+
+collapsed   = <span class="v">false</span>;
+mobileNavOpen = <span class="v">false</span>;
+
+<span class="c">// En el template — un solo bloque, funciona en desktop Y móvil</span>
+&lt;<span class="t">yaro-topbar</span>
+  <span class="p">title</span>=<span class="s">"Mi App"</span>
+  (<span class="p">menuToggle</span>)=<span class="s">"mobileNavOpen = true"</span>
+/&gt;
+
+&lt;<span class="t">yaro-sidenav</span>
+  [<span class="p">sections</span>]=<span class="s">"sections"</span>
+  [<span class="p">collapsed</span>]=<span class="s">"collapsed"</span>
+  [<span class="p">mobileOpen</span>]=<span class="s">"mobileNavOpen"</span>
+  (<span class="p">itemSelect</span>)=<span class="s">"navigate($event)"</span>
+  (<span class="p">toggleCollapse</span>)=<span class="s">"collapsed = !collapsed"</span>
+  (<span class="p">mobileClose</span>)=<span class="s">"mobileNavOpen = false"</span>
+/&gt;
+
+<span class="c">// El componente hace todo lo demás automáticamente:
+// — Desktop: sidebar fija con collapse opcional
+// — Móvil: drawer deslizante con overlay oscuro
+//   (el overlay cierra el drawer al tocarlo)</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs / @Outputs</div>
+        <table class="api-table">
+          <thead><tr><th></th><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">sections</span></td><td><span class="api-type">SidenavSection[]</span></td><td><span class="api-default">[]</span></td><td class="api-desc">Grupos de navegación con label e items</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">collapsed</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">false</span></td><td class="api-desc">Desktop: colapsa a modo icono (56px). Sin efecto en móvil</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">mobileOpen</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">false</span></td><td class="api-desc">Móvil: abre el drawer deslizante con overlay. El padre lo controla con <code>(menuToggle)</code> del topbar</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">activeId</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Id del item activo actualmente</td></tr>
+            <tr><td><span class="badge-out">@Output</span></td><td><span class="api-name">itemSelect</span></td><td><span class="api-type">EventEmitter&lt;string&gt;</span></td><td><span class="api-default">—</span></td><td class="api-desc">Emite el <code>id</code> del item al hacer clic (y cierra el drawer en móvil automáticamente)</td></tr>
+            <tr><td><span class="badge-out">@Output</span></td><td><span class="api-name">mobileClose</span></td><td><span class="api-type">EventEmitter&lt;void&gt;</span></td><td><span class="api-default">—</span></td><td class="api-desc">Emite cuando el usuario toca el overlay o selecciona un item en móvil</td></tr>
+            <tr><td><span class="badge-out">@Output</span></td><td><span class="api-name">toggleCollapse</span></td><td><span class="api-type">EventEmitter&lt;void&gt;</span></td><td><span class="api-default">—</span></td><td class="api-desc">Emite al hacer clic en el botón colapsar/expandir (desktop)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO TOPBAR
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="topbar-comp">
+      <div class="comp-header">
+        <div class="comp-title">YaroTopbar <span class="comp-selector">yaro-topbar</span></div>
+        <p class="comp-desc">Barra superior sticky (<code>z-index: 200</code>). En móvil muestra automáticamente un botón hamburguesa (☰) que emite <code>menuToggle</code> — el desarrollador lo conecta al <code>mobileOpen</code> del sidenav. El slot <code>topbar-center</code> se oculta en pantallas pequeñas.</p>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'topbar-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'topbar-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="topbar-demo">
+          <div class="demo-area" style="flex-direction:column; gap:12px; padding:20px;">
+
+            <div class="d-topbar">
+              <div class="d-topbar-brand">
+                <div class="d-topbar-logo">y</div>
+                <div class="d-topbar-titles">
+                  <span class="d-topbar-title">Inventario</span>
+                  <span class="d-topbar-subtitle">Bodega principal</span>
+                </div>
+              </div>
+              <div class="d-topbar-actions">
+                <div class="d-conn d-conn-online"><div class="d-conn-dot pulse" style="background:var(--color-green);"></div>En línea</div>
+                <button class="d-btn d-btn-sm d-btn-primary">+ Nuevo</button>
+              </div>
+            </div>
+
+            <div class="d-topbar">
+              <div class="d-topbar-brand">
+                <div class="d-topbar-logo">y</div>
+                <div class="d-topbar-titles">
+                  <span class="d-topbar-title">Dashboard</span>
+                </div>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="d-btn d-btn-sm d-btn-ghost">Exportar</button>
+                <button class="d-btn d-btn-sm d-btn-secondary">Filtrar</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="comp-panel" id="topbar-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// Conexión topbar ↔ sidenav (responsive automático)</span>
+mobileNavOpen = <span class="v">false</span>;
+
+&lt;<span class="t">yaro-topbar</span>
+  <span class="p">title</span>=<span class="s">"Inventario"</span>
+  <span class="p">subtitle</span>=<span class="s">"Bodega principal"</span>
+  (<span class="p">menuToggle</span>)=<span class="s">"mobileNavOpen = true"</span>
+&gt;
+  &lt;<span class="t">ng-container</span> <span class="p">topbar-actions</span>&gt;
+    &lt;<span class="t">yaro-connection-badge</span> <span class="p">status</span>=<span class="s">"online"</span> /&gt;
+    &lt;<span class="t">yaro-button</span> <span class="p">variant</span>=<span class="s">"primary"</span> <span class="p">size</span>=<span class="s">"sm"</span>&gt;+ Nuevo&lt;/<span class="t">yaro-button</span>&gt;
+  &lt;/<span class="t">ng-container</span>&gt;
+&lt;/<span class="t">yaro-topbar</span>&gt;
+
+<span class="c">// topbar-center se oculta automáticamente en móvil</span>
+&lt;<span class="t">yaro-topbar</span> <span class="p">title</span>=<span class="s">"Dashboard"</span> (<span class="p">menuToggle</span>)=<span class="s">"mobileNavOpen = true"</span>&gt;
+  &lt;<span class="t">ng-container</span> <span class="p">topbar-center</span>&gt;
+    &lt;<span class="t">app-search-bar</span> /&gt; <span class="c">// visible solo en ≥768px</span>
+  &lt;/<span class="t">ng-container</span>&gt;
+&lt;/<span class="t">yaro-topbar</span>&gt;</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs / @Outputs</div>
+        <table class="api-table">
+          <thead><tr><th></th><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">title</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Título de la pantalla actual</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">subtitle</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Subtítulo o contexto debajo del título</td></tr>
+            <tr><td><span class="badge-out">@Output</span></td><td><span class="api-name">menuToggle</span></td><td><span class="api-type">EventEmitter&lt;void&gt;</span></td><td><span class="api-default">—</span></td><td class="api-desc">Emite al pulsar el botón ☰ (visible solo en móvil). Conectar a <code>mobileOpen</code> del sidenav</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="api-wrap">
+        <div class="api-title">Slots · role="banner" · sticky z-200</div>
+        <table class="api-table">
+          <thead><tr><th>Slot</th><th>Posición</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">topbar-brand</span></td><td class="api-desc">Izquierda</td><td class="api-desc">Logo o nombre de la app (reemplaza el área de título)</td></tr>
+            <tr><td><span class="api-name">topbar-center</span></td><td class="api-desc">Centro</td><td class="api-desc">Buscador global u otros controles centrales</td></tr>
+            <tr><td><span class="api-name">topbar-actions</span></td><td class="api-desc">Derecha</td><td class="api-desc">Botones, badges de conexión, avatar de usuario</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO BIENESTAR PICKER
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="bienestar">
+      <div class="comp-header">
+        <div class="comp-title">YaroBienestarPicker <span class="comp-selector">yaro-bienestar-picker</span></div>
+        <p class="comp-desc">Selector de estado de bienestar del colaborador. 5 opciones predefinidas con emoji, color y label. Compatible con formularios vía <code>ControlValueAccessor</code>. Las opciones son completamente personalizables.</p>
+      </div>
+
+      <div class="comp-note note-purple">
+        <span>◈</span>
+        <div><strong>ControlValueAccessor</strong> — usa <code>[(ngModel)]</code> o <code>[formControl]</code>. El valor emitido es el <code>id</code> de la opción seleccionada (<code>'excelente'</code>, <code>'bien'</code>, etc.).</div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'bienestar-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'bienestar-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="bienestar-demo">
+          <div class="demo-area" style="flex-direction:column; gap:16px;">
+            <div class="demo-label">Opciones predefinidas (BIENESTAR_OPTIONS)</div>
+            <div class="d-bienestar" id="bienestar-picker">
+              <div class="d-bopt" onclick="selectBienestar(this)"><span class="d-bopt-icon">😊</span><span class="d-bopt-label">Excelente</span></div>
+              <div class="d-bopt sel" onclick="selectBienestar(this)"><span class="d-bopt-icon">🙂</span><span class="d-bopt-label">Bien</span></div>
+              <div class="d-bopt" onclick="selectBienestar(this)"><span class="d-bopt-icon">😐</span><span class="d-bopt-label">Regular</span></div>
+              <div class="d-bopt" onclick="selectBienestar(this)"><span class="d-bopt-icon">😔</span><span class="d-bopt-label">Cansado</span></div>
+              <div class="d-bopt" onclick="selectBienestar(this)"><span class="d-bopt-icon">😤</span><span class="d-bopt-label">Mal</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="comp-panel" id="bienestar-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// Con ngModel</span>
+&lt;<span class="t">yaro-bienestar-picker</span> [(<span class="p">ngModel</span>)]=<span class="s">"estadoBienestar"</span> /&gt;
+
+<span class="c">// Con Output manual</span>
+&lt;<span class="t">yaro-bienestar-picker</span>
+  (<span class="p">selectedChange</span>)=<span class="s">"onBienestar($event)"</span>
+/&gt;
+
+<span class="c">// Opciones personalizadas</span>
+<span class="k">import</span> { BienestarOption } <span class="k">from</span> <span class="s">'@yaro/ui'</span>;
+
+misopciones: <span class="t">BienestarOption</span>[] = [
+  { <span class="p">id</span>: <span class="s">'productivo'</span>, <span class="p">label</span>: <span class="s">'Productivo'</span>, <span class="p">icon</span>: <span class="s">'🚀'</span>, <span class="p">color</span>: <span class="s">'green'</span>  },
+  { <span class="p">id</span>: <span class="s">'neutro'</span>,     <span class="p">label</span>: <span class="s">'Neutro'</span>,     <span class="p">icon</span>: <span class="s">'😶'</span>, <span class="p">color</span>: <span class="s">'neutral'</span> },
+  { <span class="p">id</span>: <span class="s">'bloqueado'</span>,  <span class="p">label</span>: <span class="s">'Bloqueado'</span>,  <span class="p">icon</span>: <span class="s">'🛑'</span>, <span class="p">color</span>: <span class="s">'red'</span>    },
+];
+
+&lt;<span class="t">yaro-bienestar-picker</span>
+  [<span class="p">options</span>]=<span class="s">"misopciones"</span>
+  [(<span class="p">ngModel</span>)]=<span class="s">"estado"</span>
+/&gt;
+
+<span class="c">// Exportar BIENESTAR_OPTIONS para reutilizar</span>
+<span class="k">import</span> { BIENESTAR_OPTIONS } <span class="k">from</span> <span class="s">'@yaro/ui'</span>;</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs / @Outputs · <span class="badge-cva">ControlValueAccessor</span></div>
+        <table class="api-table">
+          <thead><tr><th></th><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">options</span></td><td><span class="api-type">BienestarOption[]</span></td><td><span class="api-default">BIENESTAR_OPTIONS</span></td><td class="api-desc">Array de opciones. Cada opción tiene <code>id</code>, <code>label</code>, <code>icon</code> y <code>color</code></td></tr>
+            <tr><td><span class="badge-out">@Output</span></td><td><span class="api-name">selectedChange</span></td><td><span class="api-type">EventEmitter&lt;string&gt;</span></td><td><span class="api-default">—</span></td><td class="api-desc">Emite el <code>id</code> de la opción seleccionada</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="api-wrap">
+        <div class="api-title">BIENESTAR_OPTIONS — valores exportados</div>
+        <table class="api-table">
+          <thead><tr><th>id</th><th>label</th><th>icon</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">excelente</span></td><td>Excelente</td><td>😊</td></tr>
+            <tr><td><span class="api-name">bien</span></td><td>Bien</td><td>🙂</td></tr>
+            <tr><td><span class="api-name">regular</span></td><td>Regular</td><td>😐</td></tr>
+            <tr><td><span class="api-name">cansado</span></td><td>Cansado</td><td>😔</td></tr>
+            <tr><td><span class="api-name">mal</span></td><td>Mal</td><td>😤</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO CONNECTION BADGE
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="connection-badge">
+      <div class="comp-header">
+        <div class="comp-title">YaroConnectionBadge <span class="comp-selector">yaro-connection-badge</span></div>
+        <p class="comp-desc">Indicador de estado de conexión con animación. Online pulsa suavemente, connecting y error parpadean. El punto cambia de color y animación automáticamente según el <code>status</code>. Tiene <code>role="status"</code> para accesibilidad.</p>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'conn-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'conn-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="conn-demo">
+          <div class="demo-area" style="gap:12px; flex-wrap:wrap;">
+            <div class="demo-label">Estados</div>
+            <div class="d-conn d-conn-online">
+              <div class="d-conn-dot pulse" style="background:var(--color-green);"></div>En línea
+            </div>
+            <div class="d-conn d-conn-connecting">
+              <div class="d-conn-dot blink" style="background:var(--color-amber);"></div>Conectando…
+            </div>
+            <div class="d-conn d-conn-error">
+              <div class="d-conn-dot blink-fast" style="background:var(--color-red);"></div>Error
+            </div>
+            <div class="d-conn d-conn-offline">
+              <div class="d-conn-dot" style="background:var(--color-text3);"></div>Sin conexión
+            </div>
+
+            <div class="demo-separator" style="width:100%;height:1px;background:var(--color-border);margin:4px 0;"></div>
+            <div class="demo-label">Con nombre de servicio</div>
+            <div class="d-conn d-conn-online">
+              <div class="d-conn-dot pulse" style="background:var(--color-green);"></div>
+              <span style="font-weight:600;opacity:.75;">DIAN ·</span> En línea
+            </div>
+            <div class="d-conn d-conn-error">
+              <div class="d-conn-dot blink-fast" style="background:var(--color-red);"></div>
+              <span style="font-weight:600;opacity:.75;">DIAN ·</span> Error
+            </div>
+
+            <div class="demo-separator" style="width:100%;height:1px;background:var(--color-border);margin:4px 0;"></div>
+            <div class="demo-label">Sin label (solo punto)</div>
+            <div class="d-conn d-conn-online" style="padding:6px;">
+              <div class="d-conn-dot pulse" style="background:var(--color-green);"></div>
+            </div>
+            <div class="d-conn d-conn-error" style="padding:6px;">
+              <div class="d-conn-dot blink-fast" style="background:var(--color-red);"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="comp-panel" id="conn-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// Estados básicos</span>
+&lt;<span class="t">yaro-connection-badge</span> <span class="p">status</span>=<span class="s">"online"</span>     /&gt;
+&lt;<span class="t">yaro-connection-badge</span> <span class="p">status</span>=<span class="s">"connecting"</span> /&gt;
+&lt;<span class="t">yaro-connection-badge</span> <span class="p">status</span>=<span class="s">"error"</span>      /&gt;
+&lt;<span class="t">yaro-connection-badge</span> <span class="p">status</span>=<span class="s">"offline"</span>    /&gt;
+
+<span class="c">// Con nombre de servicio</span>
+&lt;<span class="t">yaro-connection-badge</span> <span class="p">status</span>=<span class="s">"online"</span>  <span class="p">service</span>=<span class="s">"DIAN"</span> /&gt;
+&lt;<span class="t">yaro-connection-badge</span> <span class="p">status</span>=<span class="s">"error"</span>   <span class="p">service</span>=<span class="s">"DIAN"</span> /&gt;
+
+<span class="c">// Solo punto, sin texto</span>
+&lt;<span class="t">yaro-connection-badge</span> <span class="p">status</span>=<span class="s">"online"</span> [<span class="p">showLabel</span>]=<span class="s">"false"</span> /&gt;
+
+<span class="c">// Dinámico — estado desde signal</span>
+&lt;<span class="t">yaro-connection-badge</span>
+  [<span class="p">status</span>]=<span class="s">"conexionDian()"</span>
+  <span class="p">service</span>=<span class="s">"DIAN"</span>
+/&gt;</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs</div>
+        <table class="api-table">
+          <thead><tr><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">status</span></td><td><span class="api-type">'online' | 'offline' | 'connecting' | 'error'</span></td><td><span class="api-default">'online'</span></td><td class="api-desc">Estado de la conexión. Controla color y animación del punto</td></tr>
+            <tr><td><span class="api-name">service</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Nombre del servicio (ej: DIAN). Se muestra antes del label de estado</td></tr>
+            <tr><td><span class="api-name">showLabel</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">true</span></td><td class="api-desc">Muestra o oculta el texto. Con <code>false</code> solo se ve el punto animado</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="api-wrap">
+        <div class="api-title">Animaciones por estado</div>
+        <table class="api-table">
+          <thead><tr><th>Status</th><th>Color</th><th>Animación</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">online</span></td><td class="api-desc" style="color:var(--color-green);">Verde</td><td class="api-desc">Pulso suave — escala + opacidad (2s)</td></tr>
+            <tr><td><span class="api-name">connecting</span></td><td class="api-desc" style="color:var(--color-amber);">Ámbar</td><td class="api-desc">Parpadeo — blink step-start (1s)</td></tr>
+            <tr><td><span class="api-name">error</span></td><td class="api-desc" style="color:var(--color-red);">Rojo</td><td class="api-desc">Parpadeo rápido — blink step-start (0.7s)</td></tr>
+            <tr><td><span class="api-name">offline</span></td><td class="api-desc">Gris</td><td class="api-desc">Sin animación</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<div class="toast" id="toast"></div>
+
+<script src="js/main.js"></script>
+<script>
+/* ── Paginación demo ── */
+const TABLE_ROWS = [
+  { n:'Arroz Diana 500g',    s:80,  v:'+12%', up:true,  st:'OK',      si:'green' },
+  { n:'Aceite Girasol 1L',   s:22,  v:'-5%',  up:false, st:'Bajo',    si:'amber' },
+  { n:'Sal Refisal 500g',    s:5,   v:'-18%', up:false, st:'Crítico', si:'red'   },
+  { n:'Azúcar Incauca 1kg',  s:134, v:'+2%',  up:true,  st:'OK',      si:'green' },
+  { n:'Leche Colanta 1L',    s:47,  v:'+8%',  up:true,  st:'OK',      si:'green' },
+  { n:'Harina Nela 500g',    s:12,  v:'-3%',  up:false, st:'Bajo',    si:'amber' },
+  { n:'Aceite Oleocali 3L',  s:3,   v:'-22%', up:false, st:'Crítico', si:'red'   },
+  { n:'Panela Manuelita 1kg',s:61,  v:'+5%',  up:true,  st:'OK',      si:'green' },
+];
+const PAGE_SIZE = 4;
+let currentPage = 1;
+
+function renderTablePage() {
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const slice = TABLE_ROWS.slice(start, start + PAGE_SIZE);
+  const total = TABLE_ROWS.length;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  document.getElementById('table-body-paged').innerHTML = slice.map(r => `
+    <tr>
+      <td>${r.n}</td>
+      <td style="font-family:var(--font-mono);">${r.s}</td>
+      <td><span class="${r.up ? 'd-delta-up' : 'd-delta-down'}">${r.up ? '↑' : '↓'} ${r.v}</span></td>
+      <td><span class="d-badge d-badge-${r.si}">${r.st}</span></td>
+    </tr>`).join('');
+
+  const end = Math.min(currentPage * PAGE_SIZE, total);
+  document.getElementById('page-info').textContent = `${start + 1}–${end} de ${total}`;
+  document.getElementById('page-current').textContent = `${currentPage} / ${totalPages}`;
+  document.getElementById('btn-prev').disabled = currentPage <= 1;
+  document.getElementById('btn-next').disabled = currentPage >= totalPages;
+}
+
+function tablePrev() { if (currentPage > 1) { currentPage--; renderTablePage(); } }
+function tableNext() { if (currentPage < Math.ceil(TABLE_ROWS.length / PAGE_SIZE)) { currentPage++; renderTablePage(); } }
+
+/* ── Bienestar demo ── */
+function selectBienestar(el) {
+  document.querySelectorAll('#bienestar-picker .d-bopt').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+/* ── Sidenav demo ── */
+function toggleSidenav() {
+  const sn = document.getElementById('demo-sidenav');
+  const btn = sn.querySelector('.d-sidenav-toggle');
+  if (sn.classList.contains('expanded')) {
+    sn.classList.replace('expanded', 'collapsed');
+    btn.textContent = '→';
+  } else {
+    sn.classList.replace('collapsed', 'expanded');
+    btn.textContent = '← Colapsar';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', renderTablePage);
+</script>
+</body>
+</html>

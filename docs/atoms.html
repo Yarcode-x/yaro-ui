@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@yaro/ui — Átomos</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroButton
+       ════════════════════════════════════════════════════════════ */
+    .d-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--font-sans); font-weight: 500;
+      border: none; border-radius: var(--radius-sm);
+      cursor: pointer; transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+    .d-btn-sm { font-size: 11px; padding: 5px 12px; }
+    .d-btn-md { font-size: 13px; padding: 8px 16px; }
+    .d-btn-lg { font-size: 15px; padding: 11px 22px; }
+
+    .d-btn-primary            { background: var(--color-accent); color: var(--color-accent-txt); }
+    .d-btn-primary:hover      { background: var(--color-accent-dk); }
+    .d-btn-secondary          { background: transparent; color: var(--color-text); border: 1px solid var(--color-border2); }
+    .d-btn-secondary:hover    { background: var(--color-bg2); }
+    .d-btn-ghost              { background: transparent; color: var(--color-text2); }
+    .d-btn-ghost:hover        { background: var(--color-bg2); color: var(--color-text); }
+    .d-btn:disabled, .d-btn-disabled { opacity: .4; cursor: not-allowed; pointer-events: none; }
+
+    .d-spinner {
+      width: 12px; height: 12px; border-radius: 50%;
+      border: 2px solid currentColor; border-top-color: transparent;
+      animation: spin .6s linear infinite; flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroBadge
+       ════════════════════════════════════════════════════════════ */
+    .d-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: var(--font-sans); font-weight: 500;
+      border-radius: 20px; border: 1px solid; white-space: nowrap;
+    }
+    .d-badge-sm { font-size: 10px; padding: 2px 8px; }
+    .d-badge-md { font-size: 11px; padding: 3px 10px; }
+    .d-badge-dot::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+    .d-badge-accent  { background: var(--color-accent-bg);  color: var(--color-accent-txt); border-color: var(--color-accent-border); }
+    .d-badge-green   { background: var(--color-green-bg);   color: var(--color-green);      border-color: var(--color-green-border); }
+    .d-badge-red     { background: var(--color-red-bg);     color: var(--color-red);        border-color: var(--color-red-border); }
+    .d-badge-amber   { background: var(--color-amber-bg);   color: var(--color-amber);      border-color: var(--color-amber-border); }
+    .d-badge-blue    { background: var(--color-blue-bg);    color: var(--color-blue);       border-color: var(--color-blue-border); }
+    .d-badge-purple  { background: var(--color-purple-bg);  color: var(--color-purple);     border-color: var(--color-purple-border); }
+    .d-badge-neutral { background: var(--color-bg2);        color: var(--color-text2);      border-color: var(--color-border2); }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroInput
+       ════════════════════════════════════════════════════════════ */
+    .d-field { display: flex; flex-direction: column; gap: 5px; min-width: 200px; }
+    .d-field-label { font-size: 12px; font-weight: 500; color: var(--color-text2); }
+    .d-field-label .req { color: var(--color-red); margin-left: 2px; }
+    .d-input {
+      font-family: var(--font-sans); font-size: 13px;
+      padding: 9px 12px;
+      border: 1px solid var(--color-border2); border-radius: var(--radius-sm);
+      background: var(--color-white); color: var(--color-text);
+      outline: none; width: 100%;
+      transition: all var(--transition-fast);
+    }
+    .d-input:focus  { border-color: var(--color-accent-dk); box-shadow: 0 0 0 3px var(--color-accent-bg); }
+    .d-input-error  { border-color: var(--color-red) !important; }
+    .d-input-error:focus { box-shadow: 0 0 0 3px var(--color-red-bg); }
+    .d-hint  { font-size: 11px; color: var(--color-text3); }
+    .d-error { font-size: 11px; color: var(--color-red); }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroToggle
+       ════════════════════════════════════════════════════════════ */
+    .d-toggle-wrap { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+    .d-toggle {
+      width: 38px; height: 22px; border-radius: 11px;
+      background: var(--color-bg2); border: 1px solid var(--color-border2);
+      position: relative; transition: all var(--transition-base); flex-shrink: 0;
+    }
+    .d-toggle::after {
+      content: ''; position: absolute;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: white; top: 2px; left: 2px;
+      transition: transform var(--transition-base);
+      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    }
+    .d-toggle.on { background: var(--color-accent-dk); border-color: var(--color-accent-dk); }
+    .d-toggle.on::after { transform: translateX(16px); }
+    .d-toggle-label { font-size: 13px; color: var(--color-text2); }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroAvatar
+       ════════════════════════════════════════════════════════════ */
+    .d-avatar {
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-sans); font-weight: 600; flex-shrink: 0;
+      background: var(--color-accent); color: var(--color-accent-txt);
+      border: 2px solid var(--color-white); box-shadow: var(--shadow-sm);
+    }
+    .d-avatar-sm { width: 28px; height: 28px; font-size: 10px; }
+    .d-avatar-md { width: 40px; height: 40px; font-size: 14px; }
+    .d-avatar-lg { width: 52px; height: 52px; font-size: 18px; }
+    .d-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+
+    .d-avatar-b1 { background: var(--color-blue-bg);   color: var(--color-blue);   }
+    .d-avatar-b2 { background: var(--color-purple-bg); color: var(--color-purple); }
+    .d-avatar-b3 { background: var(--color-green-bg);  color: var(--color-green);  }
+
+    /* ════════════════════════════════════════════════════════════
+       RÉPLICAS DEMO — YaroDelta
+       ════════════════════════════════════════════════════════════ */
+    .d-delta {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-family: var(--font-mono); font-size: 13px; font-weight: 600;
+    }
+    .d-delta-up   { color: var(--color-green); }
+    .d-delta-down { color: var(--color-red); }
+    .d-delta-flat { color: var(--color-text3); }
+    .d-delta-arrow { font-size: 11px; }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark">yaro/ui</div>
+    <span class="logo-name">sistema de diseño</span>
+  </div>
+  <div class="topbar-chips">
+    <a href="index.html"       class="chip">Tokens</a>
+    <a href="instalacion.html" class="chip">Instalación</a>
+    <a href="atoms.html"       class="chip active">Átomos</a>
+    <a href="molecules.html"   class="chip">Moléculas</a>
+    <a href="organisms.html"   class="chip">Organismos</a>
+    <span class="chip">v1.0.0</span>
+  </div>
+</div>
+
+<div class="shell">
+
+  <!-- SIDENAV -->
+  <nav class="sidenav">
+    <div class="sn-section">
+      <span class="sn-label">Átomos</span>
+      <div class="sn-item active" data-id="button"  onclick="scrollToSection('button', this)"><div class="sn-dot"></div>YaroButton</div>
+      <div class="sn-item"        data-id="badge"   onclick="scrollToSection('badge', this)"><div class="sn-dot"></div>YaroBadge</div>
+      <div class="sn-item"        data-id="input"   onclick="scrollToSection('input', this)"><div class="sn-dot"></div>YaroInput</div>
+      <div class="sn-item"        data-id="toggle"  onclick="scrollToSection('toggle', this)"><div class="sn-dot"></div>YaroToggle</div>
+      <div class="sn-item"        data-id="avatar"  onclick="scrollToSection('avatar', this)"><div class="sn-dot"></div>YaroAvatar</div>
+      <div class="sn-item"        data-id="delta"   onclick="scrollToSection('delta', this)"><div class="sn-dot"></div>YaroDelta</div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div style="margin-bottom: 40px; animation: fu .4s cubic-bezier(.22,1,.36,1) both;">
+      <div class="section-title">Átomos</div>
+      <p class="section-desc">Los elementos más básicos del sistema. No dependen de otros componentes de <code>@yaro/ui</code> y se usan dentro de moléculas y organismos. Todos son standalone, usan <code>ChangeDetectionStrategy.OnPush</code> y <code>:host { display: contents }</code>.</p>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO BUTTON
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="button">
+      <div class="comp-header">
+        <div class="comp-title">YaroButton <span class="comp-selector">yaro-button</span></div>
+        <p class="comp-desc">Botón de acción principal. Tres variantes visuales y tres tamaños. Soporte nativo para estado de carga con spinner animado.</p>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'btn-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'btn-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="btn-demo">
+          <div class="demo-area">
+            <div class="demo-label">Variantes</div>
+            <button class="d-btn d-btn-md d-btn-primary">Guardar</button>
+            <button class="d-btn d-btn-md d-btn-secondary">Cancelar</button>
+            <button class="d-btn d-btn-md d-btn-ghost">Eliminar</button>
+
+            <div class="demo-separator"></div>
+            <div class="demo-label">Tamaños — primary</div>
+            <button class="d-btn d-btn-sm d-btn-primary">Small</button>
+            <button class="d-btn d-btn-md d-btn-primary">Medium</button>
+            <button class="d-btn d-btn-lg d-btn-primary">Large</button>
+
+            <div class="demo-separator"></div>
+            <div class="demo-label">Estados</div>
+            <button class="d-btn d-btn-md d-btn-primary d-btn-disabled">Disabled</button>
+            <button class="d-btn d-btn-md d-btn-secondary d-btn-disabled">Disabled</button>
+            <button class="d-btn d-btn-md d-btn-primary">
+              <span class="d-spinner"></span> Guardando…
+            </button>
+          </div>
+        </div>
+
+        <div class="comp-panel" id="btn-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// Variantes</span>
+&lt;<span class="t">yaro-button</span> <span class="p">variant</span>=<span class="s">"primary"</span>&gt;Guardar&lt;/<span class="t">yaro-button</span>&gt;
+&lt;<span class="t">yaro-button</span> <span class="p">variant</span>=<span class="s">"secondary"</span>&gt;Cancelar&lt;/<span class="t">yaro-button</span>&gt;
+&lt;<span class="t">yaro-button</span> <span class="p">variant</span>=<span class="s">"ghost"</span>&gt;Eliminar&lt;/<span class="t">yaro-button</span>&gt;
+
+<span class="c">// Tamaños</span>
+&lt;<span class="t">yaro-button</span> <span class="p">size</span>=<span class="s">"sm"</span>&gt;Small&lt;/<span class="t">yaro-button</span>&gt;
+&lt;<span class="t">yaro-button</span> <span class="p">size</span>=<span class="s">"lg"</span>&gt;Large&lt;/<span class="t">yaro-button</span>&gt;
+
+<span class="c">// Disabled</span>
+&lt;<span class="t">yaro-button</span> <span class="p">variant</span>=<span class="s">"primary"</span> [<span class="p">disabled</span>]=<span class="s">"true"</span>&gt;Disabled&lt;/<span class="t">yaro-button</span>&gt;
+
+<span class="c">// Loading</span>
+&lt;<span class="t">yaro-button</span> <span class="p">variant</span>=<span class="s">"primary"</span> [<span class="p">loading</span>]=<span class="s">"isSaving"</span>&gt;Guardando…&lt;/<span class="t">yaro-button</span>&gt;
+
+<span class="c">// Submit en formulario</span>
+&lt;<span class="t">yaro-button</span> <span class="p">type</span>=<span class="s">"submit"</span> <span class="p">variant</span>=<span class="s">"primary"</span>&gt;Enviar&lt;/<span class="t">yaro-button</span>&gt;</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs</div>
+        <table class="api-table">
+          <thead><tr><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">variant</span></td><td><span class="api-type">'primary' | 'secondary' | 'ghost'</span></td><td><span class="api-default">'primary'</span></td><td class="api-desc">Estilo visual del botón</td></tr>
+            <tr><td><span class="api-name">size</span></td><td><span class="api-type">'sm' | 'md' | 'lg'</span></td><td><span class="api-default">'md'</span></td><td class="api-desc">Tamaño del botón</td></tr>
+            <tr><td><span class="api-name">disabled</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">false</span></td><td class="api-desc">Deshabilita el botón e impide interacción</td></tr>
+            <tr><td><span class="api-name">loading</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">false</span></td><td class="api-desc">Muestra spinner y deshabilita el botón</td></tr>
+            <tr><td><span class="api-name">type</span></td><td><span class="api-type">string</span></td><td><span class="api-default">'button'</span></td><td class="api-desc">Tipo nativo HTML: <code>button</code>, <code>submit</code>, <code>reset</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO BADGE
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="badge">
+      <div class="comp-header">
+        <div class="comp-title">YaroBadge <span class="comp-selector">yaro-badge</span></div>
+        <p class="comp-desc">Etiqueta de estado o categoría. 7 intenciones semánticas que mapean directamente con los colores de estado del sistema. Opcionalmente muestra un punto de indicación.</p>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'badge-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'badge-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="badge-demo">
+          <div class="demo-area">
+            <div class="demo-label">Intenciones</div>
+            <span class="d-badge d-badge-md d-badge-accent">Acento</span>
+            <span class="d-badge d-badge-md d-badge-green">Activo</span>
+            <span class="d-badge d-badge-md d-badge-red">Error</span>
+            <span class="d-badge d-badge-md d-badge-amber">Advertencia</span>
+            <span class="d-badge d-badge-md d-badge-blue">Info</span>
+            <span class="d-badge d-badge-md d-badge-purple">CDP</span>
+            <span class="d-badge d-badge-md d-badge-neutral">Inactivo</span>
+
+            <div class="demo-separator"></div>
+            <div class="demo-label">Con punto (dot)</div>
+            <span class="d-badge d-badge-md d-badge-green d-badge-dot">En línea</span>
+            <span class="d-badge d-badge-md d-badge-amber d-badge-dot">Conectando</span>
+            <span class="d-badge d-badge-md d-badge-red d-badge-dot">Error</span>
+            <span class="d-badge d-badge-md d-badge-neutral d-badge-dot">Offline</span>
+
+            <div class="demo-separator"></div>
+            <div class="demo-label">Tamaño sm</div>
+            <span class="d-badge d-badge-sm d-badge-green">Stock OK</span>
+            <span class="d-badge d-badge-sm d-badge-amber">Stock bajo</span>
+            <span class="d-badge d-badge-sm d-badge-red">Crítico</span>
+          </div>
+        </div>
+
+        <div class="comp-panel" id="badge-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// Intenciones</span>
+&lt;<span class="t">yaro-badge</span> <span class="p">intent</span>=<span class="s">"green"</span>&gt;Activo&lt;/<span class="t">yaro-badge</span>&gt;
+&lt;<span class="t">yaro-badge</span> <span class="p">intent</span>=<span class="s">"red"</span>&gt;Error&lt;/<span class="t">yaro-badge</span>&gt;
+&lt;<span class="t">yaro-badge</span> <span class="p">intent</span>=<span class="s">"amber"</span>&gt;Stock bajo&lt;/<span class="t">yaro-badge</span>&gt;
+&lt;<span class="t">yaro-badge</span> <span class="p">intent</span>=<span class="s">"blue"</span>&gt;Transmitiendo&lt;/<span class="t">yaro-badge</span>&gt;
+&lt;<span class="t">yaro-badge</span> <span class="p">intent</span>=<span class="s">"purple"</span>&gt;CDP&lt;/<span class="t">yaro-badge</span>&gt;
+&lt;<span class="t">yaro-badge</span> <span class="p">intent</span>=<span class="s">"neutral"</span>&gt;Inactivo&lt;/<span class="t">yaro-badge</span>&gt;
+
+<span class="c">// Con punto indicador</span>
+&lt;<span class="t">yaro-badge</span> <span class="p">intent</span>=<span class="s">"green"</span> [<span class="p">dot</span>]=<span class="s">"true"</span>&gt;En línea&lt;/<span class="t">yaro-badge</span>&gt;
+
+<span class="c">// Tamaño pequeño</span>
+&lt;<span class="t">yaro-badge</span> <span class="p">intent</span>=<span class="s">"red"</span> <span class="p">size</span>=<span class="s">"sm"</span>&gt;Crítico&lt;/<span class="t">yaro-badge</span>&gt;
+
+<span class="c">// Dinámico — intent desde función</span>
+&lt;<span class="t">yaro-badge</span> [<span class="p">intent</span>]=<span class="s">"getIntent(row.status)"</span>&gt;{{ row.status }}&lt;/<span class="t">yaro-badge</span>&gt;</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs</div>
+        <table class="api-table">
+          <thead><tr><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">intent</span></td><td><span class="api-type">'accent' | 'green' | 'red' | 'amber' | 'blue' | 'purple' | 'neutral'</span></td><td><span class="api-default">'accent'</span></td><td class="api-desc">Color semántico del badge</td></tr>
+            <tr><td><span class="api-name">size</span></td><td><span class="api-type">'sm' | 'md'</span></td><td><span class="api-default">'md'</span></td><td class="api-desc">Tamaño del badge</td></tr>
+            <tr><td><span class="api-name">dot</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">false</span></td><td class="api-desc">Muestra un punto de color antes del texto</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO INPUT
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="input">
+      <div class="comp-header">
+        <div class="comp-title">YaroInput <span class="comp-selector">yaro-input</span></div>
+        <p class="comp-desc">Campo de texto con label, hint y manejo de errores integrado. Compatible con <code>ngModel</code> y <code>ReactiveFormsModule</code> vía <code>ControlValueAccessor</code>.</p>
+      </div>
+
+      <div class="comp-note note-purple">
+        <span>◈</span>
+        <div><strong>ControlValueAccessor</strong> — usa directamente <code>[(ngModel)]</code> o <code>[formControl]</code>. No necesitas manejar eventos <code>(input)</code> manualmente.</div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'input-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'input-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="input-demo">
+          <div class="demo-area" style="gap:20px; align-items:flex-start;">
+            <div class="d-field">
+              <label class="d-field-label">Nombre del producto</label>
+              <input class="d-input" type="text" placeholder="Ej: Arroz Diana 500g">
+              <span class="d-hint">Tal como aparece en el inventario</span>
+            </div>
+            <div class="d-field">
+              <label class="d-field-label">Precio <span class="req">*</span></label>
+              <input class="d-input d-input-error" type="number" placeholder="0" value="abc">
+              <span class="d-error">Ingresa un valor numérico válido</span>
+            </div>
+            <div class="d-field">
+              <label class="d-field-label">Contraseña</label>
+              <input class="d-input" type="password" placeholder="••••••••">
+            </div>
+          </div>
+        </div>
+
+        <div class="comp-panel" id="input-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// Básico con ngModel</span>
+&lt;<span class="t">yaro-input</span>
+  <span class="p">label</span>=<span class="s">"Nombre"</span>
+  <span class="p">placeholder</span>=<span class="s">"Ej: Juan Pérez"</span>
+  [(<span class="p">ngModel</span>)]=<span class="s">"nombre"</span>
+/&gt;
+
+<span class="c">// Con hint</span>
+&lt;<span class="t">yaro-input</span>
+  <span class="p">label</span>=<span class="s">"Email"</span>
+  <span class="p">type</span>=<span class="s">"email"</span>
+  <span class="p">hint</span>=<span class="s">"Nunca compartimos tu email"</span>
+  [(<span class="p">ngModel</span>)]=<span class="s">"email"</span>
+/&gt;
+
+<span class="c">// Con error (reactivo)</span>
+&lt;<span class="t">yaro-input</span>
+  <span class="p">label</span>=<span class="s">"Precio"</span>
+  <span class="p">type</span>=<span class="s">"number"</span>
+  [<span class="p">error</span>]=<span class="s">"form.get('precio')?.hasError('min') ? 'El precio debe ser mayor a 0' : ''"</span>
+  [<span class="p">formControl</span>]=<span class="s">"form.get('precio')"</span>
+/&gt;</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs · <span class="badge-cva">ControlValueAccessor</span></div>
+        <table class="api-table">
+          <thead><tr><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">label</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Texto del label visible sobre el input</td></tr>
+            <tr><td><span class="api-name">placeholder</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Texto de placeholder del input nativo</td></tr>
+            <tr><td><span class="api-name">type</span></td><td><span class="api-type">string</span></td><td><span class="api-default">'text'</span></td><td class="api-desc">Tipo HTML: <code>text</code>, <code>email</code>, <code>number</code>, <code>password</code>, etc.</td></tr>
+            <tr><td><span class="api-name">error</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Mensaje de error. Si no está vacío, pinta el borde rojo</td></tr>
+            <tr><td><span class="api-name">hint</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Texto de ayuda debajo del input (se oculta si hay error)</td></tr>
+            <tr><td><span class="api-name">inputId</span></td><td><span class="api-type">string</span></td><td><span class="api-default">auto</span></td><td class="api-desc">ID para el <code>for</code> del label. Se genera automáticamente si no se pasa</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO TOGGLE
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="toggle">
+      <div class="comp-header">
+        <div class="comp-title">YaroToggle <span class="comp-selector">yaro-toggle</span></div>
+        <p class="comp-desc">Interruptor binario on/off. Compatible con formularios vía <code>ControlValueAccessor</code>. Ideal para activar/desactivar configuraciones o estados como turnos activos.</p>
+      </div>
+
+      <div class="comp-note note-purple">
+        <span>◈</span>
+        <div><strong>ControlValueAccessor</strong> — usa <code>[(ngModel)]</code> o <code>[formControl]</code>. También acepta <code>[value]</code> + <code>(valueChange)</code> si prefieres control manual.</div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'toggle-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'toggle-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="toggle-demo">
+          <div class="demo-area" style="gap:24px;">
+            <div class="d-toggle-wrap" onclick="toggleDemo(this)">
+              <div class="d-toggle"></div>
+              <span class="d-toggle-label">Turno activo</span>
+            </div>
+            <div class="d-toggle-wrap" onclick="toggleDemo(this)">
+              <div class="d-toggle on"></div>
+              <span class="d-toggle-label">Notificaciones</span>
+            </div>
+            <div class="d-toggle-wrap" onclick="toggleDemo(this)">
+              <div class="d-toggle on"></div>
+              <span class="d-toggle-label">Modo oscuro</span>
+            </div>
+            <div class="d-toggle-wrap" style="opacity:.4;pointer-events:none;">
+              <div class="d-toggle"></div>
+              <span class="d-toggle-label">Deshabilitado</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="comp-panel" id="toggle-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// Con ngModel (recomendado)</span>
+&lt;<span class="t">yaro-toggle</span> <span class="p">label</span>=<span class="s">"Turno activo"</span> [(<span class="p">ngModel</span>)]=<span class="s">"turnoActivo"</span> /&gt;
+
+<span class="c">// Con value + Output (control manual)</span>
+&lt;<span class="t">yaro-toggle</span>
+  <span class="p">label</span>=<span class="s">"Notificaciones"</span>
+  [<span class="p">value</span>]=<span class="s">"notificaciones"</span>
+  (<span class="p">valueChange</span>)=<span class="s">"onToggle($event)"</span>
+/&gt;
+
+<span class="c">// En formulario reactivo</span>
+&lt;<span class="t">yaro-toggle</span>
+  <span class="p">label</span>=<span class="s">"Activo"</span>
+  [<span class="p">formControl</span>]=<span class="s">"form.get('activo')"</span>
+/&gt;</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs / @Outputs · <span class="badge-cva">ControlValueAccessor</span></div>
+        <table class="api-table">
+          <thead><tr><th></th><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">label</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Texto visible junto al toggle</td></tr>
+            <tr><td><span class="badge-in">@Input</span></td><td><span class="api-name">value</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">false</span></td><td class="api-desc">Estado del toggle (on/off)</td></tr>
+            <tr><td><span class="badge-out">@Output</span></td><td><span class="api-name">valueChange</span></td><td><span class="api-type">EventEmitter&lt;boolean&gt;</span></td><td><span class="api-default">—</span></td><td class="api-desc">Emite el nuevo valor al cambiar</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO AVATAR
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="avatar">
+      <div class="comp-header">
+        <div class="comp-title">YaroAvatar <span class="comp-selector">yaro-avatar</span></div>
+        <p class="comp-desc">Representación visual de un usuario. Muestra una imagen si <code>src</code> es válido; si no, genera iniciales automáticamente desde <code>name</code>. Si la imagen falla al cargar, hace fallback a iniciales.</p>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'avatar-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'avatar-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="avatar-demo">
+          <div class="demo-area" style="gap:16px; align-items:center;">
+            <div class="demo-label">Tamaños con iniciales</div>
+            <div class="d-avatar d-avatar-sm">YV</div>
+            <div class="d-avatar d-avatar-md">YV</div>
+            <div class="d-avatar d-avatar-lg">YV</div>
+
+            <div class="demo-separator"></div>
+            <div class="demo-label">Variantes de color (por inicial)</div>
+            <div class="d-avatar d-avatar-md">AL</div>
+            <div class="d-avatar d-avatar-md d-avatar-b1">CR</div>
+            <div class="d-avatar d-avatar-md d-avatar-b2">MP</div>
+            <div class="d-avatar d-avatar-md d-avatar-b3">JS</div>
+
+            <div class="demo-separator"></div>
+            <div class="demo-label">Con imagen</div>
+            <div class="d-avatar d-avatar-md" style="padding:0;overflow:hidden;">
+              <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=yaro" alt="avatar" onerror="this.parentElement.textContent='YV'">
+            </div>
+            <div class="d-avatar d-avatar-lg" style="padding:0;overflow:hidden;">
+              <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=valentina" alt="avatar" onerror="this.parentElement.textContent='VT'">
+            </div>
+          </div>
+        </div>
+
+        <div class="comp-panel" id="avatar-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// Solo con nombre → genera iniciales automáticamente</span>
+&lt;<span class="t">yaro-avatar</span> <span class="p">name</span>=<span class="s">"Ana López"</span> /&gt;
+&lt;<span class="t">yaro-avatar</span> <span class="p">name</span>=<span class="s">"Carlos Ruiz"</span> <span class="p">size</span>=<span class="s">"lg"</span> /&gt;
+
+<span class="c">// Con imagen (fallback a iniciales si falla)</span>
+&lt;<span class="t">yaro-avatar</span>
+  <span class="p">src</span>=<span class="s">"/api/users/42/photo"</span>
+  <span class="p">name</span>=<span class="s">"María Pérez"</span>
+  <span class="p">size</span>=<span class="s">"md"</span>
+/&gt;
+
+<span class="c">// En una lista de usuarios</span>
+<span class="k">@for</span> (user <span class="k">of</span> users; <span class="k">track</span> user.id) {
+  &lt;<span class="t">yaro-avatar</span> [<span class="p">src</span>]=<span class="s">"user.photo"</span> [<span class="p">name</span>]=<span class="s">"user.name"</span> <span class="p">size</span>=<span class="s">"sm"</span> /&gt;
+}</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs</div>
+        <table class="api-table">
+          <thead><tr><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">src</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">URL de la imagen. Si falla, muestra iniciales</td></tr>
+            <tr><td><span class="api-name">name</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Nombre completo. Se usan las dos primeras letras como iniciales</td></tr>
+            <tr><td><span class="api-name">size</span></td><td><span class="api-type">'sm' | 'md' | 'lg'</span></td><td><span class="api-default">'md'</span></td><td class="api-desc">sm=28px · md=40px · lg=52px</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         YARO DELTA
+         ══════════════════════════════════════════════════════════ -->
+    <div class="comp-section" id="delta">
+      <div class="comp-header">
+        <div class="comp-title">YaroDelta <span class="comp-selector">yaro-delta</span></div>
+        <p class="comp-desc">Indicador de variación numérica con flecha de dirección y color semántico. Verde = positivo, rojo = negativo. El flag <code>inverted</code> invierte los colores para métricas donde menos es mejor (como devoluciones o errores).</p>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-tabs">
+          <button class="comp-tab active" onclick="switchTab(this, 'delta-demo')">Vista previa</button>
+          <button class="comp-tab"        onclick="switchTab(this, 'delta-code')">Código</button>
+        </div>
+
+        <div class="comp-panel active" id="delta-demo">
+          <div class="demo-area" style="gap:24px;">
+            <div class="demo-label">Normal — positivo es bueno</div>
+            <span class="d-delta d-delta-up"><span class="d-delta-arrow">↑</span> +12.5%</span>
+            <span class="d-delta d-delta-down"><span class="d-delta-arrow">↓</span> -3.2%</span>
+            <span class="d-delta d-delta-flat">— 0.0%</span>
+
+            <div class="demo-separator"></div>
+            <div class="demo-label">Invertido — menos es mejor (ej: devoluciones)</div>
+            <span class="d-delta d-delta-down"><span class="d-delta-arrow">↓</span> -5 devoluciones</span>
+            <span class="d-delta d-delta-up"><span class="d-delta-arrow">↑</span> +8 devoluciones</span>
+
+            <div class="demo-separator"></div>
+            <div class="demo-label">Con unidad personalizada</div>
+            <span class="d-delta d-delta-up"><span class="d-delta-arrow">↑</span> +$45.000</span>
+            <span class="d-delta d-delta-up"><span class="d-delta-arrow">↑</span> +24 uds</span>
+          </div>
+        </div>
+
+        <div class="comp-panel" id="delta-code">
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre class="code-block"><span class="c">// Porcentaje (default)</span>
+&lt;<span class="t">yaro-delta</span> [<span class="p">value</span>]=<span class="s">"12.5"</span> <span class="p">unit</span>=<span class="s">"%"</span> /&gt;
+&lt;<span class="t">yaro-delta</span> [<span class="p">value</span>]=<span class="s">"-3.2"</span> <span class="p">unit</span>=<span class="s">"%"</span> /&gt;
+
+<span class="c">// Sin decimales</span>
+&lt;<span class="t">yaro-delta</span> [<span class="p">value</span>]=<span class="s">"24"</span> <span class="p">unit</span>=<span class="s">" uds"</span> [<span class="p">decimals</span>]=<span class="s">"0"</span> /&gt;
+
+<span class="c">// Invertido — positivo es malo (devoluciones, errores)</span>
+&lt;<span class="t">yaro-delta</span> [<span class="p">value</span>]=<span class="s">"8"</span> <span class="p">unit</span>=<span class="s">" devoluciones"</span> [<span class="p">inverted</span>]=<span class="s">"true"</span> /&gt;
+
+<span class="c">// Dinámico — desde signal</span>
+&lt;<span class="t">yaro-delta</span> [<span class="p">value</span>]=<span class="s">"ventasDelta()"</span> <span class="p">unit</span>=<span class="s">"%"</span> /&gt;</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-wrap">
+        <div class="api-title">API — @Inputs</div>
+        <table class="api-table">
+          <thead><tr><th>Propiedad</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><span class="api-name">value</span></td><td><span class="api-type">number</span></td><td><span class="api-default">0</span></td><td class="api-desc">Valor de la variación. Positivo = flecha arriba, negativo = abajo</td></tr>
+            <tr><td><span class="api-name">unit</span></td><td><span class="api-type">string</span></td><td><span class="api-default">''</span></td><td class="api-desc">Sufijo del valor: <code>%</code>, <code> uds</code>, <code> km</code>, etc.</td></tr>
+            <tr><td><span class="api-name">decimals</span></td><td><span class="api-type">number</span></td><td><span class="api-default">1</span></td><td class="api-desc">Número de decimales a mostrar</td></tr>
+            <tr><td><span class="api-name">inverted</span></td><td><span class="api-type">boolean</span></td><td><span class="api-default">false</span></td><td class="api-desc">Invierte los colores: positivo = rojo, negativo = verde. Para métricas donde menos es mejor</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<div class="toast" id="toast"></div>
+
+<script src="js/main.js"></script>
+<script>
+function toggleDemo(wrap) {
+  wrap.querySelector('.d-toggle').classList.toggle('on');
+}
+</script>
+</body>
+</html>

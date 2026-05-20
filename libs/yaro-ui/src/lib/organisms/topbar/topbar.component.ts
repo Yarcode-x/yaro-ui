@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'yaro-topbar',
@@ -7,6 +7,14 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   styleUrl: './topbar.component.scss',
   template: `
     <header class="topbar" role="banner">
+
+      <button
+        class="topbar-menu-btn"
+        type="button"
+        aria-label="Abrir menú de navegación"
+        (click)="menuToggle.emit()">
+        <span class="topbar-menu-icon"></span>
+      </button>
 
       <div class="topbar-start">
         <ng-content select="[topbar-brand]" />
@@ -32,6 +40,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   `,
 })
 export class YaroTopbarComponent {
-  @Input() title:    string = '';
-  @Input() subtitle: string = '';
+  @Input()  title:    string = '';
+  @Input()  subtitle: string = '';
+  @Output() menuToggle = new EventEmitter<void>();
 }

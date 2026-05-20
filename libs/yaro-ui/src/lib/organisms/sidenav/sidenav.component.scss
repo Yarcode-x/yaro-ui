@@ -1,4 +1,4 @@
-:host { display: block; height: 100%; }
+:host { display: contents; }
 
 .sidenav {
   display: flex;
@@ -17,6 +17,27 @@
 
     // En modo colapsado los nav-items muestran solo el ícono
     yaro-nav-item { justify-content: center; }
+  }
+
+  // ─── Modo drawer en móvil ────────────────────────────────────────
+  @media (max-width: 767px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    width: 280px !important; // siempre expandido en móvil
+    z-index: 300;
+    box-shadow: var(--shadow-lg);
+    transform: translateX(-100%);
+    transition: transform var(--transition-spring);
+
+    // Siempre visible en móvil (no importa collapsed)
+    .sidenav-section-label { display: block; }
+    yaro-nav-item { justify-content: flex-start; }
+
+    &--mobile-open {
+      transform: translateX(0);
+    }
   }
 }
 
@@ -69,4 +90,27 @@
   padding: var(--space-3) var(--space-2);
   border-top: 1px solid var(--color-border);
   flex-shrink: 0;
+}
+
+// ─── Overlay backdrop (solo móvil, activado cuando drawer está abierto) ───────
+.sidenav-overlay {
+  display: none;
+
+  @media (max-width: 767px) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 299;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-fast);
+  }
+}
+
+.sidenav--mobile-open + .sidenav-overlay {
+  @media (max-width: 767px) {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
