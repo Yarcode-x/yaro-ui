@@ -1,4 +1,4 @@
-name: Publicar @yarcode/ui
+name: Publicar @yarcode-x/ui
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://npm.pkg.github.com'
-          scope: '@yarcode'
+          scope: '@yarcode-x'
 
       - name: Instalar dependencias
         run: npm ci
