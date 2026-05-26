@@ -4,5 +4,8 @@
     "entryFile": "src/index.ts",
     "cssUrl": "inline"
   },
+  "assets": [
+    "src/styles/**/*.scss"
+  ],
   "dest": "../../dist/libs/yaro-ui"
 }
