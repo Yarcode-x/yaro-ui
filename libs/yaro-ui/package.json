@@ -1,5 +1,5 @@
 {
-  "name": "@yarcode-x/ui",
+  "name": "@yarcode-x/yaro-ui",
   "version": "1.0.1",
   "peerDependencies": {
     "@angular/common": ">=17.0.0",
