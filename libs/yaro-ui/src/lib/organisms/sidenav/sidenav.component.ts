@@ -33,7 +33,7 @@ export interface SidenavSection {
       </div>
 
       <div class="sidenav-body">
-        @for (section of sections; track section.label ?? $index) {
+        @for (section of sections; track $index) {
           <div class="sidenav-section">
             @if (section.label && !collapsed) {
               <span class="sidenav-section-label">{{ section.label }}</span>

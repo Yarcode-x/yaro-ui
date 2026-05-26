@@ -24,17 +24,20 @@ export type AvatarSize = 'sm' | 'md' | 'lg';
 })
 export class YaroAvatarComponent {
   @Input() src  = '';
-  @Input() name = '';
   @Input() size: AvatarSize = 'md';
+
+  private _name = signal('');
+  @Input() set name(v: string) { this._name.set(v); }
+  get name(): string { return this._name(); }
 
   protected imgError = signal(false);
 
   protected initials = computed(() =>
-    this.name
+    this._name()
       .trim()
       .split(/\s+/)
       .slice(0, 2)
-      .map(w => w[0]?.toUpperCase() ?? '')
+      .map((w: string) => w[0]?.toUpperCase() ?? '')
       .join('')
   );
 

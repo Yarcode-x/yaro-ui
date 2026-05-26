@@ -1,0 +1,26 @@
+{
+  "name": "@yaro/ui-workspace",
+  "private": true,
+  "scripts": {
+    "build": "ng-packagr -p libs/yaro-ui/ng-package.json",
+    "build:watch": "ng-packagr -p libs/yaro-ui/ng-package.json --watch",
+    "version:patch": "npm version patch --prefix libs/yaro-ui",
+    "version:minor": "npm version minor --prefix libs/yaro-ui",
+    "version:major": "npm version major --prefix libs/yaro-ui"
+  },
+  "devDependencies": {
+    "@angular/animations": "~17.3.0",
+    "@angular/common": "~17.3.0",
+    "@angular/compiler": "~17.3.0",
+    "@angular/compiler-cli": "~17.3.0",
+    "@angular/core": "~17.3.0",
+    "@angular/forms": "~17.3.0",
+    "@angular/platform-browser": "~17.3.0",
+    "@angular/platform-browser-dynamic": "~17.3.0",
+    "ng-packagr": "^17.3.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.6.3",
+    "typescript": "~5.4.5",
+    "zone.js": "~0.14.0"
+  }
+}

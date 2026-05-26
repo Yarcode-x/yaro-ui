@@ -5,5 +5,8 @@
     "@angular/common": ">=17.0.0",
     "@angular/core": ">=17.0.0"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
 }

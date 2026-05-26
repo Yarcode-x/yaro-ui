@@ -30,10 +30,12 @@ export class YaroStatBarComponent {
   @Input() label:      string        = '';
   @Input() set value(v: number)      { this._value.set(v); }
   @Input() max:        number        = 100;
-  @Input() intent:     StatBarIntent = 'accent';
   @Input() showPercent = true;
 
-  private _value = signal(0);
+  private _value  = signal(0);
+  private _intent = signal<StatBarIntent>('accent');
+  @Input() set intent(v: StatBarIntent) { this._intent.set(v); }
+  get intent(): StatBarIntent { return this._intent(); }
 
   protected percentage  = computed(() => Math.min(100, Math.max(0, (this._value() / this.max) * 100)));
   protected displayValue = computed(() =>
@@ -41,5 +43,5 @@ export class YaroStatBarComponent {
       ? `${this.percentage().toFixed(0)}%`
       : `${this._value()} / ${this.max}`
   );
-  protected fillClass = computed(() => `stat-bar-fill--${this.intent}`);
+  protected fillClass = computed(() => `stat-bar-fill--${this._intent()}`);
 }

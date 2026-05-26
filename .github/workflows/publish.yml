@@ -1,0 +1,33 @@
+name: Publicar @yaro/ui
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@yaro'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Build librería
+        run: npm run build
+
+      - name: Publicar en GitHub Packages
+        run: cd dist/libs/yaro-ui && npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
